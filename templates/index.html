@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        form{
+            margin-top:10%;
+            margin-left:40%;
+        }
+        h1{
+            margin-top:5%;
+            margin-bottom:10px;
+            margin-left:40%;
+        }
+        h3{
+            margin-top:40px;
+            margin-bottom: 10px;
+            margin-left:40%;
+        }
+            
+
+        input[type=text] {
+            padding:5px; 
+            border:2px solid #ccc; 
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+        }
+
+        input[type=submit] {
+            padding:5px 15px; 
+            background:#ccc; 
+            border:0 none;
+            cursor:pointer;
+            -webkit-border-radius: 5px;
+            border-radius: 5px; 
+            background-color: #cce6ff;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1>Stock Recommendation Engine</h1>
+    <h3>Service Provider: CMPE 285 Team 2</h3>
+
+    <form action="." method="POST">
+        Enter Investment Amount <input type="text" name="Amount"><br>
+        Choose One or Two Investment Strategies <br><br>
+
+        <div class = "checkbox-inline">
+            <input type="checkbox" id="ethicalCheckbox" value="ethical" name="ethical_chosen"> Ethical Investing<br>
+            <input type="checkbox" id="growthCheckbox" value="growth" name="growth_chosen"> Growth Investing<br>
+            <input type="checkbox" id="indexCheckbox" value="index" name="index_chosen"> Index Investing<br>
+            <input type="checkbox" id="qualityCheckbox" value="quality" name="quality_chosen"> Quality Investing<br>
+            <input type="checkbox" id="valueCheckbox" value="value" name="value_chosen"> Value Investing<br>
+        </div><br><br>
+
+        <input type="submit" name="my-form" value="Recommend">
+    </form>
+
+</body>
+</html>

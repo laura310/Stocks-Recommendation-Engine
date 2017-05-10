@@ -1,0 +1,54 @@
+<DOCTYPE html>
+<html> 
+<head> 
+
+	<style>
+		h2{		 
+		    margin-top:40px;
+		    margin-bottom: 40px;
+		    text-align: center;
+		} 
+		h3{		 
+		    margin-top:20px;
+		    margin-bottom: 10px;
+		    margin-left:20%;
+		} 
+		p{
+		    margin-bottom: 20px;
+		    margin-left:20%;
+		}
+		input[type=submit] {
+            padding:5px 15px; 
+            background:#ccc; 
+            border:0 none;
+            cursor:pointer;
+            -webkit-border-radius: 5px;
+            border-radius: 5px; 
+            background-color: #cce6ff;
+        }
+	</style>  
+    
+</head> 
+    
+    
+<body>    
+	<h2>Stocks Recommendation </h2>
+
+
+	<h3> Investment Amount </h3>
+	<p> ${{ var_investment_amount }}<p>
+	<h3> Based on your investing strategies: "{{ var_strategy }}", here's recommended stocks/ETFs </h3>
+	<p> {{var_top3_stocks}} <p>
+	<h3> Past 5 days' Average Close Price of recommended stocks/ETFs </h3>
+	<p> {{var_top3_avg}} <p>
+	
+
+ 	<button id="returnButton" class="return-button" >Return</button>
+	<script type="text/javascript">
+	    document.getElementById("returnButton").onclick = function () {
+	        location.href = "/";
+	    };
+	</script>
+</body>
+ 
+</html>
