@@ -4,8 +4,8 @@
 
 	<style>
 		h2{		 
-		    margin-top:40px;
-		    margin-bottom: 40px;
+		    margin-top:30px;
+		    margin-bottom: 30px;
 		    text-align: center;
 		} 
 		h3{		 
@@ -17,14 +17,16 @@
 		    margin-bottom: 20px;
 		    margin-left:20%;
 		}
-		input[type=submit] {
+		button{
             padding:5px 15px; 
             background:#ccc; 
             border:0 none;
             cursor:pointer;
             -webkit-border-radius: 5px;
             border-radius: 5px; 
-            background-color: #cce6ff;
+            background-color: #cce6ff; 		
+			margin-left:20%;
+			display:block;
         }
 	</style>  
     
@@ -38,9 +40,16 @@
 	<h3> Investment Amount </h3>
 	<p> ${{ var_investment_amount }}<p>
 	<h3> Based on your investing strategies: "{{ var_strategy }}", here's recommended stocks/ETFs </h3>
-	<p> {{var_top3_stocks}} <p>
-	<h3> Past 5 days' Average Close Price of recommended stocks/ETFs </h3>
-	<p> {{var_top3_avg}} <p>
+	<p> {{var_top3_stocks[0]}} <p>
+	<p> {{var_top3_stocks[1]}} <p>
+	<p> {{var_top3_stocks[2]}} <p>
+	<h3> Ratio of the three recommended stocks </h3>
+	<p> {{var_top3_stocks[0]}} : {{var_top3_stocks[1]}} : {{var_top3_stocks[2]}} =  {{var_ratio_list[0]}} : {{var_ratio_list[1]}} : {{var_ratio_list[2]}} <p>
+	<h3> Past 5 days' Price of recommended stocks/ETFs </h3>
+	<p> {{var_top3_stocks[0]}}: {{var_top3_pastInfo[0]}} <p>
+	<p> {{var_top3_stocks[1]}}: {{var_top3_pastInfo[1]}} <p>
+	<p> {{var_top3_stocks[2]}}: {{var_top3_pastInfo[2]}} <p>
+	<p> note: don't know why there are only three price records for the past 5 days. </p>
 	
 
  	<button id="returnButton" class="return-button" >Return</button>

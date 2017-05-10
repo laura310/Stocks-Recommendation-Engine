@@ -21,10 +21,13 @@ def get_stock_historical_info(stock_sym) :
     endday = get_endday()
     stock = Share(stock_sym)
     closes = [c['Close'] for c in stock.get_historical(str(startday), str(endday))]
-    floatCloses = [float(i) for i in closes]
+    floatCloses = [round(float(i), 2) for i in closes]
 
     return floatCloses
 
+def simplify_ratio(original_ratio_list) :
+    minEle = min(original_ratio_list)
+    return [int(x / minEle) for x in original_ratio_list]
 
 def processing(stocks_list):
     info0 = get_stock_historical_info(stocks_list[0])
@@ -48,43 +51,48 @@ def processing(stocks_list):
     top3_stocks = [stocks_list[top1Index], stocks_list[top2Index], stocks_list[top3Index]]
 
     top3_avg = [avg_list[top1Index], avg_list[top2Index], avg_list[top3Index]]
-    top3_stock_and_avg_list = [top3_stocks, top3_avg]
-    return top3_stock_and_avg_list
+    top3_avg_ratio_original = [round(avg_list[top1Index], 1), round(avg_list[top2Index], 1), round(avg_list[top3Index], 1)]
+    top3_avg_ratio = simplify_ratio(top3_avg_ratio_original)
+
+    top3_past_info = [info_list[top1Index], info_list[top2Index], info_list[top3Index]]
+
+    top3_stock_avgRatio_pastInfo_list = [top3_stocks, top3_avg_ratio, top3_past_info]
+    return top3_stock_avgRatio_pastInfo_list
 
 
 # AAPL  GILD    GOOG   JCI  NOV
 def ethical_processing() :
     stocks_list = ['AAPL', 'GILD', 'GOOG', 'JCI', 'NOV']
-    top3_stock_and_avg_list = processing(stocks_list)
-    return top3_stock_and_avg_list
+    top3_stock_avgRatio_pastInfo_list = processing(stocks_list)
+    return top3_stock_avgRatio_pastInfo_list
 
 
 # # QQQ   IWF VUG IVW IWO
 def growth_processing():
     stocks_list = ['QQQ', 'IWF', 'VUG', 'IVW', 'IWO']
-    top3_stock_and_avg_list = processing(stocks_list)
-    return top3_stock_and_avg_list
+    top3_stock_avgRatio_pastInfo_list = processing(stocks_list)
+    return top3_stock_avgRatio_pastInfo_list
 
 
 # # SPY   QQQ     IWM     DIA     VTI
 def index_processing():
     stocks_list = ['SPY', 'QQQ', 'IWM', 'DIA', 'VTI']
-    top3_stock_and_avg_list = processing(stocks_list)
-    return top3_stock_and_avg_list
+    top3_stock_avgRatio_pastInfo_list = processing(stocks_list)
+    return top3_stock_avgRatio_pastInfo_list
 
 
 # # JPM   RAI   PSA   RYAAY   PGR
 def quality_processing():
     stocks_list = ['JPM', 'RAI', 'PSA', 'RYAAY', 'PGR']
-    top3_stock_and_avg_list = processing(stocks_list)
-    return top3_stock_and_avg_list
+    top3_stock_avgRatio_pastInfo_list = processing(stocks_list)
+    return top3_stock_avgRatio_pastInfo_list
 
 
 # # AAL   GILD    WFC    PBR    BRFS
 def value_processing():
     stocks_list = ['AAL', 'GILD', 'WFC', 'PBR', 'BRFS']
-    top3_stock_and_avg_list = processing(stocks_list)
-    return top3_stock_and_avg_list
+    top3_stock_avgRatio_pastInfo_list = processing(stocks_list)
+    return top3_stock_avgRatio_pastInfo_list
 
 
 
@@ -98,24 +106,27 @@ def my_form_post():
     amount = request.form['Amount']
     # Currently, only support checking only one of the checkbox 
     if request.form.get('ethical_chosen'):
-        top3_stock_and_avg_list = ethical_processing()
+        top3_stock_avgRatio_pastInfo_list = ethical_processing()
         strategy = request.form.get('ethical_chosen')
     if request.form.get('growth_chosen'):
-        top3_stock_and_avg_list = growth_processing()
+        top3_stock_avgRatio_pastInfo_list = growth_processing()
         strategy = request.form.get('growth_chosen')
     if request.form.get('index_chosen'):
-        top3_stock_and_avg_list = index_processing()
+        top3_stock_avgRatio_pastInfo_list = index_processing()
         strategy = request.form.get('index_chosen')
     if request.form.get('quality_chosen'):
-        top3_stock_and_avg_list = quality_processing()
+        top3_stock_avgRatio_pastInfo_list = quality_processing()
         strategy = request.form.get('quality_chosen')
     if request.form.get('value_chosen'):
-        top3_stock_and_avg_list = value_processing()
+        top3_stock_avgRatio_pastInfo_list = value_processing()
         strategy = request.form.get('value_chosen')
 
 
     return render_template("calculateResult.html", var_investment_amount=float(amount), var_strategy=strategy, 
-        var_top3_stocks=top3_stock_and_avg_list[0], var_top3_avg=top3_stock_and_avg_list[1])
+        var_top3_stocks=top3_stock_avgRatio_pastInfo_list[0], var_ratio_list=top3_stock_avgRatio_pastInfo_list[1], 
+        var_top3_pastInfo=top3_stock_avgRatio_pastInfo_list[2])
+
+
 
 if __name__ == '__main__':
     app.run()
