@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        
+    
+    <title>Stock Project</title>
+    <link href="{{ url_for('static', filename='dashboard.css') }}" rel="stylesheet">
+    
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      var companys = ["company1", "company2", "company3"];
+      var ratios = [10,15,20];
+      var day1 = [100,200,300];
+      var day2 = [200,250,150];
+      var day3 = [300,100,250];
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Ticker', 'amount'],
+          [companys[0],  ratios[0] ],
+          [companys[1],  ratios[1] ],
+          [companys[2],  ratios[2] ]          
+        ]);
+
+        var options = {
+          title: 'Investment Strategy',
+          is3D: true,
+        };
+
+        var piechart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        piechart.draw(data, options);
+        
+
+        var dataLine = google.visualization.arrayToDataTable([
+          ['Day', companys[0], companys[1], companys[2] ],
+          ['Day1',  day1[0],      day1[1],  day1[2] ],
+          ['Day2',  day2[0],      day2[1],   day2[2] ],
+          ['Day3',  day3[0],     day3[1],   day3[2] ]
+        ]);
+        var optionsLine = {
+          title: 'Weekly Trend',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };        
+        var linechart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        linechart.draw(dataLine, optionsLine);
+      }
+    </script>
+      
+    </script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Stock Project</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Help</a></li>
+            <li><a href="#">Our Team</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <script>   
+        function handleClick(cb) 
+        {
+            var count = 0;
+            if(document.getElementById("Check1").checked){count += 1;}
+            if(document.getElementById("Check2").checked){count += 1;}
+            if(document.getElementById("Check3").checked){count += 1;}
+            if(document.getElementById("Check4").checked){count += 1;}
+            if(document.getElementById("Check5").checked){count += 1;}
+            if(count > 2)
+            {
+                alert('Pick only one or two please.')
+                cb.checked = false;
+            }
+        }
+        
+       
+       
+    </script>
+  
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <form class="input-data">
+                <br>
+                <input type="number" NAME="amt" id="amt" class="form-control" placeholder="Amout to invest (in $)..."><br>
+                <b>Pick one or two strategies:</b><br> 
+                <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check1" id="Check1" onclick="handleClick(this);"> Ethical Investing <br>
+                <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check2" id="Check2" onclick="handleClick(this);"> Growth  Investing <br>
+                <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check3" id="Check3" onclick="handleClick(this);"> Index Investing <br>
+                <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check4" id="Check4" onclick="handleClick(this);"> Quality  Investing <br>
+                <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check5" id="Check5" onclick="handleClick(this);"> Value Investing <br><br>
+                <input id="submit" type="button" name="submit" value="Submit" style="position: absolute; left:50px; height:40px;width:100px; border-radius: 25px;"><br>
+            </form>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h3 class="sub-header">Investment distribution chart</h3>
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <div id="piechart_3d" style="width: 600px; height: 360px;"></div>
+              <!-- <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail"> -->
+              <!-- <h4>Strategy</h4> -->
+              <!-- <span class="text-muted">Suggested distribution of money</span> -->
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <div id="curve_chart" style="position: absolute; left:250px; width: 600px; height: 360px"></div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Investment Strategy</th>
+                  <th>Ticker Symbol</th>
+                  <th>Company</th>
+                  <th>Amout (in $)</th>
+                  <th>% Investment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Ethical Investing</td>
+                  <td>NSRGY</td>
+                  <td>Nestle</td>
+                  <td>2000</td>
+                  <td>40</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Ethical Investing</td>
+                  <td>ADBE</td>
+                  <td>Adobe</td>
+                  <td>1000</td>
+                  <td>20</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Index Investing</td>
+                  <td>VTI</td>
+                  <td>Vanguard Total Stock Market ETF</td>
+                  <td>750</td>
+                  <td>15</td>
+                </tr>               
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <!-- <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script> -->
+    <!-- <script src="../../dist/js/bootstrap.min.js"></script> -->
+    <!-- <script src="../../assets/js/vendor/holder.min.js"></script> -->
+    <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
+    
+    <script>
+        //google.setOnLoadCallback(initialize);
+        <!-- google.charts.load("current", {packages:["corechart"]}); -->
+        <!-- google.load("visualization", "1", {packages:["corechart"]}); -->
+        $(document).ready(function(){           
+            // click on button submit
+            $("#submit").on('click', function(){
+            
+                // click on button submit
+                //alert('Pick only one or two please.')
+                var inputdata = getpayloaddata();			
+                console.log(inputdata);
+                
+                $.ajax({
+                    url: '/result', // url where to submit the request
+                    type : "post", // type of action post || get
+                    contentType:'application/json',
+                    datatype : 'json', // data type
+                    data : inputdata, // post data || get data
+                    success : function(result) {
+                        // you can see the result from the console
+                        // tab of the developer tools
+                        console.log(result);
+                        showoutput(result);
+                    },
+                    error: function(xhr, resp, text) {
+                        console.log(xhr, resp, text);
+                    }
+                })                    
+            });
+            
+            function getpayloaddata()
+            {		
+                var stockObject = new Object();
+                if(document.getElementById("Check1").checked){stockObject.ethical_chosen = 1;}
+                if(document.getElementById("Check2").checked){stockObject.growth_chosen = 1;}
+                if(document.getElementById("Check3").checked){stockObject.index_chosen = 1;}
+                if(document.getElementById("Check4").checked){stockObject.quality_chosen = 1;}
+                if(document.getElementById("Check5").checked){stockObject.value_chosen = 1;}
+                
+                stockObject.amount = $('#amt').val();
+                var jsonstring = JSON.stringify(stockObject);
+                return jsonstring;			
+            }
+            
+            function showoutput(result)
+            {
+                var objOutput = $.parseJSON(result);
+                if( objOutput.errMsg === "SystemSymbol")
+                {
+                }
+                companys = [objOutput.Top3[0], objOutput.Top3[1], objOutput.Top3[2]];
+                ratios = [objOutput.RatioList[0], objOutput.RatioList[1], objOutput.RatioList[2]];
+                day1 = [objOutput.PastInfo[0][0], objOutput.PastInfo[1][0], objOutput.PastInfo[2][0]];
+                day2 = [objOutput.PastInfo[0][1], objOutput.PastInfo[1][1], objOutput.PastInfo[2][1]];
+                day3 = [objOutput.PastInfo[0][2], objOutput.PastInfo[1][2], objOutput.PastInfo[2][2]];
+                
+                drawChart();
+            }
+        });
+    </script>
+  </body>
+</html>

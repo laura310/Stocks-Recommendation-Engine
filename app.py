@@ -1,12 +1,11 @@
 from flask import Flask
-from flask import request
+from flask import jsonify, request, session
+import json
 from flask import render_template
 from yahoo_finance import Share
 from datetime import date, timedelta
 
-
 app = Flask(__name__)
-
 
 def get_startday() :
     startday = date.today() - timedelta(5)   
@@ -126,10 +125,47 @@ def my_form_post():
         var_top3_stocks=top3_stock_avgRatio_pastInfo_list[0], var_ratio_list=top3_stock_avgRatio_pastInfo_list[1], 
         var_top3_pastInfo=top3_stock_avgRatio_pastInfo_list[2])
 
+    
+@app.route('/charts')
+def charts():
+   return render_template('charts.html')
+   
+finalResult = {}    
+@app.route('/result',methods = ['POST'])
+def displayCharts():
+   input= json.dumps(request.json)
+   data = input
+   print(data)
+   amount = request.json['amount']
+   finalResult["errMsg"] = "None"
 
+   # Currently, only support checking only one of the checkbox 
+   if 'ethical_chosen' in input:
+        top3_stock_avgRatio_pastInfo_list = ethical_processing()
+        finalResult["Strategy"] = "ethical_chosen"
+   if 'growth_chosen' in input:
+        top3_stock_avgRatio_pastInfo_list = growth_processing()
+        finalResult["Strategy"] = "growth_chosen"
+   if 'index_chosen' in input:
+        top3_stock_avgRatio_pastInfo_list = index_processing()
+        finalResult["Strategy"] = "index_chosen"
+   if 'quality_chosen' in input:
+        top3_stock_avgRatio_pastInfo_list = quality_processing()
+        finalResult["Strategy"] = "quality_chosen"
+   if 'value_chosen' in input:
+        top3_stock_avgRatio_pastInfo_list = value_processing()
+        finalResult["Strategy"] = "value_chosen"
+   
+   finalResult["Top3"] = top3_stock_avgRatio_pastInfo_list[0];
+   finalResult["RatioList"] = top3_stock_avgRatio_pastInfo_list[1];
+   finalResult["PastInfo"] = top3_stock_avgRatio_pastInfo_list[2];
+   
+   jsonResult = json.dumps(finalResult)
+   return jsonResult
 
 if __name__ == '__main__':
-    app.run()
+    #app.run()
+    app.run( host='0.0.0.0',port = 5000, debug = True) # run app in debug mode
 
 
 
