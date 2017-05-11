@@ -8,4 +8,4 @@ Enter amount and choose 2 strategies.
 It does not let you chhose more than 2.
 Then click submit.
 Takes few seconds to update pie chart and line graph.
-The table below is not updated yet. Keeps displying hard coded data.
+The table below displays the Strategy used and Ticker symbol. Other data is hardcoded.

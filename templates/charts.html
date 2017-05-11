@@ -24,6 +24,7 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       var companys = ["company1", "company2", "company3"];
+      var strategy = ["growth", "growth", "growth"];
       var ratios = [10,15,20];
       var day1 = [100,200,300];
       var day2 = [200,250,150];
@@ -60,6 +61,14 @@
         };        
         var linechart = new google.visualization.LineChart(document.getElementById('curve_chart'));
         linechart.draw(dataLine, optionsLine);
+        
+        document.getElementById('com1').innerHTML = companys[0];
+        document.getElementById('com2').innerHTML = companys[1];
+        document.getElementById('com3').innerHTML = companys[2];
+        
+        document.getElementById('strat1').innerHTML = strategy[0];
+        document.getElementById('strat2').innerHTML = strategy[1];
+        document.getElementById('strat3').innerHTML = strategy[2];
       }
     </script>
       
@@ -153,24 +162,24 @@
               <tbody>
                 <tr>
                   <td>1</td>
-                  <td>Ethical Investing</td>
-                  <td>NSRGY</td>
+                  <td id="strat1">Ethical Investing</td>
+                  <td id="com1">company1</td>
                   <td>Nestle</td>
                   <td>2000</td>
                   <td>40</td>
                 </tr>
                 <tr>
                   <td>2</td>
-                  <td>Ethical Investing</td>
-                  <td>ADBE</td>
+                  <td id="strat2">Ethical Investing</td>
+                  <td id="com2">ADBE</td>
                   <td>Adobe</td>
                   <td>1000</td>
                   <td>20</td>
                 </tr>
                 <tr>
                   <td>3</td>
-                  <td>Index Investing</td>
-                  <td>VTI</td>
+                  <td id="strat3">Index Investing</td>
+                  <td id="com3">VTI</td>
                   <td>Vanguard Total Stock Market ETF</td>
                   <td>750</td>
                   <td>15</td>
@@ -247,6 +256,7 @@
                 day1 = [objOutput.PastInfo[0][0], objOutput.PastInfo[1][0], objOutput.PastInfo[2][0]];
                 day2 = [objOutput.PastInfo[0][1], objOutput.PastInfo[1][1], objOutput.PastInfo[2][1]];
                 day3 = [objOutput.PastInfo[0][2], objOutput.PastInfo[1][2], objOutput.PastInfo[2][2]];
+                strategy = [objOutput.Strategy, objOutput.Strategy, objOutput.Strategy ];
                 
                 drawChart();
             }

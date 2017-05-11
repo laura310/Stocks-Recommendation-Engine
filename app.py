@@ -142,19 +142,19 @@ def displayCharts():
    # Currently, only support checking only one of the checkbox 
    if 'ethical_chosen' in input:
         top3_stock_avgRatio_pastInfo_list = ethical_processing()
-        finalResult["Strategy"] = "ethical_chosen"
+        finalResult["Strategy"] = "Ethical Investing"
    if 'growth_chosen' in input:
         top3_stock_avgRatio_pastInfo_list = growth_processing()
-        finalResult["Strategy"] = "growth_chosen"
+        finalResult["Strategy"] = "Growth Investing"
    if 'index_chosen' in input:
         top3_stock_avgRatio_pastInfo_list = index_processing()
-        finalResult["Strategy"] = "index_chosen"
+        finalResult["Strategy"] = "Index Investing"
    if 'quality_chosen' in input:
         top3_stock_avgRatio_pastInfo_list = quality_processing()
-        finalResult["Strategy"] = "quality_chosen"
+        finalResult["Strategy"] = "Quality Investing"
    if 'value_chosen' in input:
         top3_stock_avgRatio_pastInfo_list = value_processing()
-        finalResult["Strategy"] = "value_chosen"
+        finalResult["Strategy"] = "Value Investing"
    
    finalResult["Top3"] = top3_stock_avgRatio_pastInfo_list[0];
    finalResult["RatioList"] = top3_stock_avgRatio_pastInfo_list[1];
