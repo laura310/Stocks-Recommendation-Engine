@@ -4,6 +4,7 @@ import json
 from flask import render_template
 from yahoo_finance import Share
 from datetime import date, timedelta
+import yahoo_finance
 
 app = Flask(__name__)
 
@@ -29,22 +30,14 @@ def simplify_ratio(original_ratio_list) :
     return [int(x / minEle) for x in original_ratio_list]
 
 
-
 def processing(stocks_list):
-    # price of past 5 days for each potential stock
-    info0 = get_stock_historical_info(stocks_list[0])
-    info1 = get_stock_historical_info(stocks_list[1])
-    info2 = get_stock_historical_info(stocks_list[2])
-    info3 = get_stock_historical_info(stocks_list[3])
-    info4 = get_stock_historical_info(stocks_list[4])
-    info_list = [info0, info1, info2, info3, info4]
-
-    avg0 = round(sum(info0)/len(info0), 2)
-    avg1 = round(sum(info1)/len(info1), 2)
-    avg2 = round(sum(info2)/len(info2), 2)
-    avg3 = round(sum(info3)/len(info3), 2)
-    avg4 = round(sum(info4)/len(info4), 2)
+    avg0 = float( Share(stocks_list[0]).get_200day_moving_avg() )
+    avg1 = float( Share(stocks_list[1]).get_200day_moving_avg() )
+    avg2 = float( Share(stocks_list[2]).get_200day_moving_avg() )
+    avg3 = float( Share(stocks_list[3]).get_200day_moving_avg() )
+    avg4 = float( Share(stocks_list[4]).get_200day_moving_avg() )
     avg_list = [avg0, avg1, avg2, avg3, avg4]
+
 
     top3_index_list = sorted(range(len(avg_list)), key=lambda i: avg_list[i], reverse=True)[:3]
     top1Index = top3_index_list[0]
@@ -53,13 +46,12 @@ def processing(stocks_list):
     top3_stocks = [stocks_list[top1Index], stocks_list[top2Index], stocks_list[top3Index]]
 
 
-    top3_avg = [avg_list[top1Index], avg_list[top2Index], avg_list[top3Index]]
-    top3_avg_ratio_original = [round(avg_list[top1Index], 1), round(avg_list[top2Index], 1), round(avg_list[top3Index], 1)]
+    top3_avg_ratio_original = [avg_list[top1Index], avg_list[top2Index], avg_list[top3Index]]
     top3_avg_ratio = simplify_ratio(top3_avg_ratio_original)
 
 
-    top3_past_info = [info_list[top1Index], info_list[top2Index], info_list[top3Index]]
     amount = float(request.form.get('Amount'))
+    top3_past_info = [get_stock_historical_info(top3_stocks[0]), get_stock_historical_info(top3_stocks[1]), get_stock_historical_info(top3_stocks[2])]
     top1_profolio = [round( amount/float(Share(top3_stocks[0]).get_price()) * i, 2 ) for i in top3_past_info[0]]
     top2_profolio = [round( amount/float(Share(top3_stocks[1]).get_price()) * i, 2 ) for i in top3_past_info[1]]
     top3_profolio = [round( amount/float(Share(top3_stocks[2]).get_price()) * i, 2 ) for i in top3_past_info[2]]
