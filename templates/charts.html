@@ -23,7 +23,7 @@
     
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-      var stocks = ["company1", "company2", "company3"];
+      var companys = ["company1", "company2", "company3"];
       var strategy = ["growth", "growth", "growth"];
       var ratios = [10,15,20];
       var day1 = [100,200,300];
@@ -34,9 +34,9 @@
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
           ['Ticker', 'amount'],
-          [stocks[0],  ratios[0] ],
-          [stocks[1],  ratios[1] ],
-          [stocks[2],  ratios[2] ]          
+          [companys[0],  ratios[0] ],
+          [companys[1],  ratios[1] ],
+          [companys[2],  ratios[2] ]          
         ]);
 
         var options = {
@@ -49,7 +49,7 @@
         
 
         var dataLine = google.visualization.arrayToDataTable([
-          ['Day', stocks[0], stocks[1], stocks[2] ],
+          ['Day', companys[0], companys[1], companys[2] ],
           ['Day1',  day1[0],      day1[1],  day1[2] ],
           ['Day2',  day2[0],      day2[1],   day2[2] ],
           ['Day3',  day3[0],     day3[1],   day3[2] ]
@@ -62,9 +62,9 @@
         var linechart = new google.visualization.LineChart(document.getElementById('curve_chart'));
         linechart.draw(dataLine, optionsLine);
         
-        document.getElementById('com1').innerHTML = stocks[0];
-        document.getElementById('com2').innerHTML = stocks[1];
-        document.getElementById('com3').innerHTML = stocks[2];
+        document.getElementById('com1').innerHTML = companys[0];
+        document.getElementById('com2').innerHTML = companys[1];
+        document.getElementById('com3').innerHTML = companys[2];
         
         document.getElementById('strat1').innerHTML = strategy[0];
         document.getElementById('strat2').innerHTML = strategy[1];
@@ -118,6 +118,21 @@
   
     <div class="container-fluid">
       <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <form class="input-data">
+                <br>
+                <input type="number" NAME="amt" id="amt" class="form-control" placeholder="Amout to invest (in $)..."><br>
+                <b>Pick one or two strategies:</b><br> 
+                <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check1" id="Check1" onclick="handleClick(this);"> Ethical Investing <br>
+                <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check2" id="Check2" onclick="handleClick(this);"> Growth  Investing <br>
+                <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check3" id="Check3" onclick="handleClick(this);"> Index Investing <br>
+                <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check4" id="Check4" onclick="handleClick(this);"> Quality  Investing <br>
+                <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check5" id="Check5" onclick="handleClick(this);"> Value Investing <br><br>
+                <input id="submit" type="button" name="submit" value="Submit" style="position: absolute; left:50px; height:40px;width:100px; border-radius: 25px;"><br>
+            </form>
+          </ul>
+        </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h3 class="sub-header">Investment distribution chart</h3>
           <div class="row placeholders">
@@ -236,7 +251,7 @@
                 if( objOutput.errMsg === "SystemSymbol")
                 {
                 }
-                stocks = [objOutput.Top3[0], objOutput.Top3[1], objOutput.Top3[2]];
+                companys = [objOutput.Top3[0], objOutput.Top3[1], objOutput.Top3[2]];
                 ratios = [objOutput.RatioList[0], objOutput.RatioList[1], objOutput.RatioList[2]];
                 day1 = [objOutput.PastInfo[0][0], objOutput.PastInfo[1][0], objOutput.PastInfo[2][0]];
                 day2 = [objOutput.PastInfo[0][1], objOutput.PastInfo[1][1], objOutput.PastInfo[2][1]];
