@@ -8,7 +8,7 @@ from datetime import date, timedelta
 app = Flask(__name__)
 
 def get_startday() :
-    startday = date.today() - timedelta(5)   
+    startday = date.today() - timedelta(7)   
     return startday
 
 def get_endday() :
