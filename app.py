@@ -22,7 +22,6 @@ def get_stock_historical_info(stock_sym) :
     stock = Share(stock_sym)
     closes = [c['Close'] for c in stock.get_historical(str(startday), str(endday))]
     floatCloses = [round(float(i), 2) for i in closes]
-
     return floatCloses
 
 def simplify_ratio(original_ratio_list) :
