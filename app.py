@@ -99,8 +99,6 @@ def my_form_post():
     return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies_selected, 
         var_top3_stocks=top3_stock_avgRatio_profolio_list[0], var_ratio_list=top3_stock_avgRatio_profolio_list[1],
         var_stocks_profolio=top3_stock_avgRatio_profolio_list[2])
-
-
   
 # @app.route('/charts')
 # def charts():
