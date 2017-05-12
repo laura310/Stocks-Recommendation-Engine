@@ -4,9 +4,19 @@ import json
 from flask import render_template
 from yahoo_finance import Share
 from datetime import date, timedelta
-import yahoo_finance
+
 
 app = Flask(__name__)
+
+
+stock_map = {
+    'ethical' : ['AAPL', 'GILD', 'GOOG', 'JCI',   'NOV'],
+    'growth'  : ['QQQ',  'IWF',  'VUG',  'IVW',   'IWO'],
+    'index'   : ['SPY',  'QQQ',  'IWM',  'DIA',   'VTI'],
+    'quality' : ['JPM',  'RAI',  'PSA',  'RYAAY', 'PGR'],
+    'value'   : ['AAL',  'GILD', 'WFC',  'PBR',   'BRFS']
+}
+
 
 def get_startday() :
     startday = date.today() - timedelta(7)   
@@ -24,75 +34,44 @@ def get_stock_historical_info(stock_sym) :
     floatCloses = [round(float(i), 2) for i in closes]
     return floatCloses
 
+# Divided by the maximum common divisor
 def simplify_ratio(original_ratio_list) :
     minEle = min(original_ratio_list)
     return [int(x / minEle) for x in original_ratio_list]
 
+# input: a list of selected stock symbols
+# output: a list of two lists: top3 stock symbol list and ratio of 3 symbols
+def select_top3(stock_list):
+    avg_map=dict.fromkeys(stock_list,0) # stock symbol from the stock_list : 200day_moving_avg
+    for s in stock_list:
+        avg_map[s] = float(Share(s).get_200day_moving_avg())   
+    top3_symbol_list = sorted(avg_map, key = lambda x:avg_map[x], reverse=True)[:3]
 
-def processing(stocks_list):
-    avg0 = float( Share(stocks_list[0]).get_200day_moving_avg() )
-    avg1 = float( Share(stocks_list[1]).get_200day_moving_avg() )
-    avg2 = float( Share(stocks_list[2]).get_200day_moving_avg() )
-    avg3 = float( Share(stocks_list[3]).get_200day_moving_avg() )
-    avg4 = float( Share(stocks_list[4]).get_200day_moving_avg() )
-    avg_list = [avg0, avg1, avg2, avg3, avg4]
+    ratio_list = []
+    for symbol in top3_symbol_list:
+        ratio_list.append(avg_map[symbol])
+    top3_avg_ratio = simplify_ratio(ratio_list)
+    
+    return [top3_symbol_list, top3_avg_ratio]
 
 
-    top3_index_list = sorted(range(len(avg_list)), key=lambda i: avg_list[i], reverse=True)[:3]
-    top1Index = top3_index_list[0]
-    top2Index = top3_index_list[1]
-    top3Index = top3_index_list[2]
-    top3_stocks = [stocks_list[top1Index], stocks_list[top2Index], stocks_list[top3Index]]
-
-
-    top3_avg_ratio_original = [avg_list[top1Index], avg_list[top2Index], avg_list[top3Index]]
-    top3_avg_ratio = simplify_ratio(top3_avg_ratio_original)
+def processing(stock_list):
+    top3_stock_avgRatio_profolio_list = select_top3(stock_list)
+    top3_stocks = top3_stock_avgRatio_profolio_list[0]
+    top3_avg_ratio = top3_stock_avgRatio_profolio_list[1]
 
 
     amount = float(request.form.get('Amount'))
+    top1_amount = amount * top3_avg_ratio[0] / sum(top3_avg_ratio)
+    top2_amount = amount * top3_avg_ratio[1] / sum(top3_avg_ratio)
+    top3_amount = amount * top3_avg_ratio[2] / sum(top3_avg_ratio)
     top3_past_info = [get_stock_historical_info(top3_stocks[0]), get_stock_historical_info(top3_stocks[1]), get_stock_historical_info(top3_stocks[2])]
-    top1_profolio = [round( amount/float(Share(top3_stocks[0]).get_price()) * i, 2 ) for i in top3_past_info[0]]
-    top2_profolio = [round( amount/float(Share(top3_stocks[1]).get_price()) * i, 2 ) for i in top3_past_info[1]]
-    top3_profolio = [round( amount/float(Share(top3_stocks[2]).get_price()) * i, 2 ) for i in top3_past_info[2]]
-    top3_stocks_profolio = [top1_profolio, top2_profolio, top3_profolio]
+    top1_profolio = [round( top1_amount/float(Share(top3_stocks[0]).get_price()) * i, 2 ) for i in top3_past_info[0]]
+    top2_profolio = [round( top2_amount/float(Share(top3_stocks[1]).get_price()) * i, 2 ) for i in top3_past_info[1]]
+    top3_profolio = [round( top3_amount/float(Share(top3_stocks[2]).get_price()) * i, 2 ) for i in top3_past_info[2]]
+    top3_stocks_profolio = [x+y+z for x, y, z in zip(top1_profolio, top2_profolio, top3_profolio)]
 
-
-    top3_stock_avgRatio_profolio_list = [top3_stocks, top3_avg_ratio, top3_stocks_profolio]
-    return top3_stock_avgRatio_profolio_list
-
-
-# AAPL  GILD    GOOG   JCI  NOV
-def ethical_processing() :
-    stocks_list = ['AAPL', 'GILD', 'GOOG', 'JCI', 'NOV']
-    top3_stock_avgRatio_profolio_list = processing(stocks_list)
-    return top3_stock_avgRatio_profolio_list
-
-
-# # QQQ   IWF VUG IVW IWO
-def growth_processing():
-    stocks_list = ['QQQ', 'IWF', 'VUG', 'IVW', 'IWO']
-    top3_stock_avgRatio_profolio_list = processing(stocks_list)
-    return top3_stock_avgRatio_profolio_list
-
-
-# # SPY   QQQ     IWM     DIA     VTI
-def index_processing():
-    stocks_list = ['SPY', 'QQQ', 'IWM', 'DIA', 'VTI']
-    top3_stock_avgRatio_profolio_list = processing(stocks_list)
-    return top3_stock_avgRatio_profolio_list
-
-
-# # JPM   RAI   PSA   RYAAY   PGR
-def quality_processing():
-    stocks_list = ['JPM', 'RAI', 'PSA', 'RYAAY', 'PGR']
-    top3_stock_avgRatio_profolio_list = processing(stocks_list)
-    return top3_stock_avgRatio_profolio_list
-
-
-# # AAL   GILD    WFC    PBR    BRFS
-def value_processing():
-    stocks_list = ['AAL', 'GILD', 'WFC', 'PBR', 'BRFS']
-    top3_stock_avgRatio_profolio_list = processing(stocks_list)
+    top3_stock_avgRatio_profolio_list.append(top3_stocks_profolio)
     return top3_stock_avgRatio_profolio_list
 
 
@@ -105,65 +84,60 @@ def my_form():
 def my_form_post():
 
     amount = request.form['Amount']
-    # Currently, only support checking only one of the checkbox 
-    if request.form.get('ethical_chosen'):
-        top3_stock_avgRatio_profolio_list = ethical_processing()
-        strategy = request.form.get('ethical_chosen')
-    if request.form.get('growth_chosen'):
-        top3_stock_avgRatio_profolio_list = growth_processing()
-        strategy = request.form.get('growth_chosen')
-    if request.form.get('index_chosen'):
-        top3_stock_avgRatio_profolio_list = index_processing()
-        strategy = request.form.get('index_chosen')
-    if request.form.get('quality_chosen'):
-        top3_stock_avgRatio_profolio_list = quality_processing()
-        strategy = request.form.get('quality_chosen')
-    if request.form.get('value_chosen'):
-        top3_stock_avgRatio_profolio_list = value_processing()
-        strategy = request.form.get('value_chosen')
+
+    strategies_selected = request.form.getlist('strategies')
+
+    #obtain stock symbol from stock_map using strategy as key 
+    stock_list =[]
+    for s in strategies_selected:
+        for symbol in stock_map.get(s):
+            stock_list.append(symbol)
+
+    print stock_list
+    top3_stock_avgRatio_profolio_list = processing(stock_list)
+
+    return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies_selected, 
+        var_top3_stocks=top3_stock_avgRatio_profolio_list[0], var_ratio_list=top3_stock_avgRatio_profolio_list[1],
+        var_stocks_profolio=top3_stock_avgRatio_profolio_list[2])
 
 
-    return render_template("calculateResult.html", var_investment_amount=float(amount), var_strategy=strategy, 
-        var_top3_stocks=top3_stock_avgRatio_profolio_list[0], var_ratio_list=top3_stock_avgRatio_profolio_list[1], 
-        var_top3_pastInfo=top3_stock_avgRatio_profolio_list[2])
+  
+# @app.route('/charts')
+# def charts():
+#    return render_template('charts.html')
+  
+# finalResult = {}    
+# @app.route('/result',methods = ['POST'])
+# def displayCharts():
+#    input= json.dumps(request.json)
+#    data = input
+#    print(data)
+#    amount = request.json['amount']
+#    finalResult["errMsg"] = "None"
 
-    
-@app.route('/charts')
-def charts():
-   return render_template('charts.html')
+#    # Currently, only support checking only one of the checkbox 
+#    if 'ethical_chosen' in input:
+#         top3_stock_avgRatio_profolio_list = ethical_processing()
+#         finalResult["Strategy"] = "Ethical Investing"
+#    if 'growth_chosen' in input:
+#         top3_stock_avgRatio_profolio_list = growth_processing()
+#         finalResult["Strategy"] = "Growth Investing"
+#    if 'index_chosen' in input:
+#         top3_stock_avgRatio_profolio_list = index_processing()
+#         finalResult["Strategy"] = "Index Investing"
+#    if 'quality_chosen' in input:
+#         top3_stock_avgRatio_profolio_list = quality_processing()
+#         finalResult["Strategy"] = "Quality Investing"
+#    if 'value_chosen' in input:
+#         top3_stock_avgRatio_profolio_list = value_processing()
+#         finalResult["Strategy"] = "Value Investing"
    
-finalResult = {}    
-@app.route('/result',methods = ['POST'])
-def displayCharts():
-   input= json.dumps(request.json)
-   data = input
-   print(data)
-   amount = request.json['amount']
-   finalResult["errMsg"] = "None"
-
-   # Currently, only support checking only one of the checkbox 
-   if 'ethical_chosen' in input:
-        top3_stock_avgRatio_profolio_list = ethical_processing()
-        finalResult["Strategy"] = "Ethical Investing"
-   if 'growth_chosen' in input:
-        top3_stock_avgRatio_profolio_list = growth_processing()
-        finalResult["Strategy"] = "Growth Investing"
-   if 'index_chosen' in input:
-        top3_stock_avgRatio_profolio_list = index_processing()
-        finalResult["Strategy"] = "Index Investing"
-   if 'quality_chosen' in input:
-        top3_stock_avgRatio_profolio_list = quality_processing()
-        finalResult["Strategy"] = "Quality Investing"
-   if 'value_chosen' in input:
-        top3_stock_avgRatio_profolio_list = value_processing()
-        finalResult["Strategy"] = "Value Investing"
+#    finalResult["Top3"] = top3_stock_avgRatio_profolio_list[0];
+#    finalResult["RatioList"] = top3_stock_avgRatio_profolio_list[1];
+#    finalResult["PastInfo"] = top3_stock_avgRatio_profolio_list[2];
    
-   finalResult["Top3"] = top3_stock_avgRatio_profolio_list[0];
-   finalResult["RatioList"] = top3_stock_avgRatio_profolio_list[1];
-   finalResult["PastInfo"] = top3_stock_avgRatio_profolio_list[2];
-   
-   jsonResult = json.dumps(finalResult)
-   return jsonResult
+#    jsonResult = json.dumps(finalResult)
+#    return jsonResult
 
 if __name__ == '__main__':
     #app.run()
