@@ -4,6 +4,7 @@ import json
 from flask import render_template
 from yahoo_finance import Share
 from datetime import date, timedelta
+from pytz import timezone 
 
 
 app = Flask(__name__)
@@ -48,32 +49,37 @@ def select_top_ones(stock_list, num):
     for s in stock_list:
         temp_map[s] = float(Share(s).get_200day_moving_avg())
     avg_map.update(temp_map)
-    top_symbol_list = sorted(avg_map, key = lambda x:temp_map[x], reverse=True)[:num]
+    top_symbol_list = sorted(temp_map, key =lambda x: temp_map[x], reverse=True)[:num]
+   
     return top_symbol_list
 
 #input: top 4 stock symbol list
 def processing(selected_list):
-
+    
     ratio_list = []
+    top4_past_info =[]
     for symbol in selected_list:
         ratio_list.append(avg_map[symbol])
+        top4_past_info.append(get_stock_historical_info(symbol))
+
     top4_avg_ratio = simplify_ratio(ratio_list)
     top4_stock_avgRatio_profolio_list = [selected_list, top4_avg_ratio]
 
-    amount = float(request.form.get('Amount'))
-    top1_amount = amount * top4_avg_ratio[0] / sum(top4_avg_ratio)
-    top2_amount = amount * top4_avg_ratio[1] / sum(top4_avg_ratio)
-    top3_amount = amount * top4_avg_ratio[2] / sum(top4_avg_ratio)
-    top4_amount = amount * top4_avg_ratio[3] / sum(top4_avg_ratio)
+    print top4_stock_avgRatio_profolio_list
 
-    top4_past_info =[]
-    for s in selected_list:
-        top4_past_info.append(get_stock_historical_info(s))
+    amount = float(request.form.get('Amount'))
+    sum_ratio = float(sum(top4_avg_ratio))
+    top1_amount = amount * top4_avg_ratio[0] / sum_ratio
+    top2_amount = amount * top4_avg_ratio[1] / sum_ratio
+    top3_amount = amount * top4_avg_ratio[2] / sum_ratio
+    top4_amount = amount * top4_avg_ratio[3] / sum_ratio
+
+
     top1_profolio = [round( top1_amount/float(Share(selected_list[0]).get_price()) * i, 2 ) for i in top4_past_info[0]]
     top2_profolio = [round( top2_amount/float(Share(selected_list[1]).get_price()) * i, 2 ) for i in top4_past_info[1]]
     top3_profolio = [round( top3_amount/float(Share(selected_list[2]).get_price()) * i, 2 ) for i in top4_past_info[2]]
     top4_profolio = [round( top4_amount/float(Share(selected_list[3]).get_price()) * i, 2 ) for i in top4_past_info[3]]
-    top4_stocks_profolio = [x+y+z for x, y, z in zip(top1_profolio, top2_profolio, top3_profolio)]
+    top4_stocks_profolio = [x+y+z+w for x, y, z, w in zip(top1_profolio, top2_profolio, top3_profolio, top4_profolio)]
 
     top4_stock_avgRatio_profolio_list.append(top4_stocks_profolio)
     return top4_stock_avgRatio_profolio_list
@@ -90,15 +96,15 @@ def my_form_post():
     amount = request.form['Amount']
 
     strategies_selected = request.form.getlist('strategies')
-
+    print strategies_selected
     #if one strategy picked, select top4; if two strategy picked, select top2 from each strategy.
     selected_list =[]
     avg_map.clear()
     if len(strategies_selected) == 1:
-        select_list = select_top_ones(strategies_selected[0], 4)
+        selected_list = select_top_ones(stock_map.get(strategies_selected[0]), 4)
     else:
         for s in strategies_selected:
-            top2_list = select_top_ones(s, 2)
+            top2_list = select_top_ones(stock_map.get(s), 2)
             for symbol in top2_list:
                selected_list.append(symbol)
     
