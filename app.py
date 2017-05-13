@@ -39,40 +39,41 @@ def simplify_ratio(original_ratio_list) :
     minEle = min(original_ratio_list)
     return [int(x / minEle) for x in original_ratio_list]
 
-# input: a list of selected stock symbols
-# output: a list of two lists: top3 stock symbol list and ratio of 3 symbols
-def select_top3(stock_list):
+#Selecte 2 stock from one list
+#input: list of stock symbol, and num of stock to select(either 2 or 4 in our case)
+def select_top_ones(stock_list, num):
     avg_map=dict.fromkeys(stock_list,0) # stock symbol from the stock_list : 200day_moving_avg
     for s in stock_list:
         avg_map[s] = float(Share(s).get_200day_moving_avg())   
-    top3_symbol_list = sorted(avg_map, key = lambda x:avg_map[x], reverse=True)[:3]
+    top_symbol_list = sorted(avg_map, key = lambda x:avg_map[x], reverse=True)[:num]
+    return top_symbol_list
+
+#input: top 4 stock symbol list
+def processing(selected_list):
 
     ratio_list = []
-    for symbol in top3_symbol_list:
+    for symbol in selected_list:
         ratio_list.append(avg_map[symbol])
-    top3_avg_ratio = simplify_ratio(ratio_list)
-    
-    return [top3_symbol_list, top3_avg_ratio]
-
-
-def processing(stock_list):
-    top3_stock_avgRatio_profolio_list = select_top3(stock_list)
-    top3_stocks = top3_stock_avgRatio_profolio_list[0]
-    top3_avg_ratio = top3_stock_avgRatio_profolio_list[1]
-
+    top4_avg_ratio = simplify_ratio(ratio_list)
+    top4_stock_avgRatio_profolio_list = [selected_list, top4_avg_ratio]
 
     amount = float(request.form.get('Amount'))
-    top1_amount = amount * top3_avg_ratio[0] / sum(top3_avg_ratio)
-    top2_amount = amount * top3_avg_ratio[1] / sum(top3_avg_ratio)
-    top3_amount = amount * top3_avg_ratio[2] / sum(top3_avg_ratio)
-    top3_past_info = [get_stock_historical_info(top3_stocks[0]), get_stock_historical_info(top3_stocks[1]), get_stock_historical_info(top3_stocks[2])]
-    top1_profolio = [round( top1_amount/float(Share(top3_stocks[0]).get_price()) * i, 2 ) for i in top3_past_info[0]]
-    top2_profolio = [round( top2_amount/float(Share(top3_stocks[1]).get_price()) * i, 2 ) for i in top3_past_info[1]]
-    top3_profolio = [round( top3_amount/float(Share(top3_stocks[2]).get_price()) * i, 2 ) for i in top3_past_info[2]]
-    top3_stocks_profolio = [x+y+z for x, y, z in zip(top1_profolio, top2_profolio, top3_profolio)]
+    top1_amount = amount * top4_avg_ratio[0] / sum(top4_avg_ratio)
+    top2_amount = amount * top4_avg_ratio[1] / sum(top4_avg_ratio)
+    top3_amount = amount * top4_avg_ratio[2] / sum(top4_avg_ratio)
+    top4_amount = amount * top4_avg_ratio[3] / sum(top4_avg_ratio)
 
-    top3_stock_avgRatio_profolio_list.append(top3_stocks_profolio)
-    return top3_stock_avgRatio_profolio_list
+    top4_past_info =[]
+    for s in selected_list:
+        top4_past_info.append(get_stock_historical_info(s))
+    top1_profolio = [round( top1_amount/float(Share(selected_list[0]).get_price()) * i, 2 ) for i in top4_past_info[0]]
+    top2_profolio = [round( top2_amount/float(Share(selected_list[1]).get_price()) * i, 2 ) for i in top4_past_info[1]]
+    top3_profolio = [round( top3_amount/float(Share(selected_list[2]).get_price()) * i, 2 ) for i in top4_past_info[2]]
+    top4_profolio = [round( top4_amount/float(Share(selected_list[3]).get_price()) * i, 2 ) for i in top4_past_info[3]]
+    top4_stocks_profolio = [x+y+z for x, y, z in zip(top1_profolio, top2_profolio, top3_profolio)]
+
+    top4_stock_avgRatio_profolio_list.append(top4_stocks_profolio)
+    return top4_stock_avgRatio_profolio_list
 
 
 
@@ -87,18 +88,21 @@ def my_form_post():
 
     strategies_selected = request.form.getlist('strategies')
 
-    #obtain stock symbol from stock_map using strategy as key 
-    stock_list =[]
-    for s in strategies_selected:
-        for symbol in stock_map.get(s):
-            stock_list.append(symbol)
-
-    print stock_list
-    top3_stock_avgRatio_profolio_list = processing(stock_list)
+    #if one strategy picked, select top4; if two strategy picked, select top2 from each strategy.
+    selected_list =[]
+    if len(strategies_selected) == 1:
+        select_list = select_top_ones(strategies_selected[0], 4)
+    else:
+        for s in strategies_selected:
+            top2_list = select_top_ones(s, 2)
+            for symbol in top2_list:
+               selected_list.append(symbol)
+   
+    top4_stock_avgRatio_profolio_list = processing(selected_list)
 
     return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies_selected, 
-        var_top3_stocks=top3_stock_avgRatio_profolio_list[0], var_ratio_list=top3_stock_avgRatio_profolio_list[1],
-        var_stocks_profolio=top3_stock_avgRatio_profolio_list[2])
+        var_top3_stocks=top4_stock_avgRatio_profolio_list[0], var_ratio_list=top4_stock_avgRatio_profolio_list[1],
+        var_stocks_profolio=top4_stock_avgRatio_profolio_list[2])
   
 @app.route('/charts')
 def charts():
