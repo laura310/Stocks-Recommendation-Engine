@@ -17,6 +17,7 @@ stock_map = {
     'value'   : ['AAL',  'GILD', 'WFC',  'PBR',   'BRFS']
 }
 
+avg_map={}
 
 def get_startday() :
     startday = date.today() - timedelta(7)   
@@ -42,10 +43,12 @@ def simplify_ratio(original_ratio_list) :
 #Selecte 2 stock from one list
 #input: list of stock symbol, and num of stock to select(either 2 or 4 in our case)
 def select_top_ones(stock_list, num):
-    avg_map=dict.fromkeys(stock_list,0) # stock symbol from the stock_list : 200day_moving_avg
+    temp_map = {}
+    temp_map=dict.fromkeys(stock_list,0) # stock symbol from the stock_list : 200day_moving_avg
     for s in stock_list:
-        avg_map[s] = float(Share(s).get_200day_moving_avg())   
-    top_symbol_list = sorted(avg_map, key = lambda x:avg_map[x], reverse=True)[:num]
+        temp_map[s] = float(Share(s).get_200day_moving_avg())
+    avg_map.update(temp_map)
+    top_symbol_list = sorted(avg_map, key = lambda x:temp_map[x], reverse=True)[:num]
     return top_symbol_list
 
 #input: top 4 stock symbol list
@@ -90,6 +93,7 @@ def my_form_post():
 
     #if one strategy picked, select top4; if two strategy picked, select top2 from each strategy.
     selected_list =[]
+    avg_map.clear()
     if len(strategies_selected) == 1:
         select_list = select_top_ones(strategies_selected[0], 4)
     else:
@@ -97,7 +101,7 @@ def my_form_post():
             top2_list = select_top_ones(s, 2)
             for symbol in top2_list:
                selected_list.append(symbol)
-   
+    
     top4_stock_avgRatio_profolio_list = processing(selected_list)
 
     return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies_selected, 
