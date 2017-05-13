@@ -4,11 +4,11 @@ import json
 from flask import render_template
 from yahoo_finance import Share
 from datetime import date, timedelta
-from pytz import timezone 
+import urllib2
 
 
 app = Flask(__name__)
-
+base_url = "http://download.finance.yahoo.com/d/quotes.csv?"
 
 stock_map = {
     'ethical' : ['AAPL', 'GILD', 'GOOG', 'JCI',   'NOV'],
@@ -19,6 +19,14 @@ stock_map = {
 }
 
 avg_map={}
+
+def get_200day_moving_percent(symbol):
+    f="m6"
+    query = base_url+"s="+symbol+"&f="+f+"&e=.csv"
+    response = urllib2.urlopen(query)
+    data = response.read()
+    percent = data.replace('%','').strip()
+    return float(percent)
 
 def get_startday() :
     startday = date.today() - timedelta(7)   
@@ -47,7 +55,7 @@ def select_top_ones(stock_list, num):
     temp_map = {}
     temp_map=dict.fromkeys(stock_list,0) # stock symbol from the stock_list : 200day_moving_avg
     for s in stock_list:
-        temp_map[s] = float(Share(s).get_200day_moving_avg())
+        temp_map[s] = get_200day_moving_percent(s)
     avg_map.update(temp_map)
     top_symbol_list = sorted(temp_map, key =lambda x: temp_map[x], reverse=True)[:num]
    
