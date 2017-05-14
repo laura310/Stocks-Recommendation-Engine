@@ -9,6 +9,7 @@ import urllib2
 
 app = Flask(__name__)
 base_url = "http://download.finance.yahoo.com/d/quotes.csv?"
+history_url = "http://ichart.finance.yahoo.com/table.csv?"
 
 stock_map = {
     'ethical' : ['AAPL', 'GILD', 'GOOG', 'JCI',   'NOV'],
@@ -28,21 +29,29 @@ def get_200day_moving_percent(symbol):
     percent = data.replace('%','').strip()
     return float(percent)
 
-def get_startday() :
-    startday = date.today() - timedelta(7)   
-    return startday
+def get_startday():
+    startday = date.today() - timedelta(7) 
+    return (str(startday.month-1), str(startday.day),str(startday.year))
 
-def get_endday() :
+def get_endday():
     endday = date.today() - timedelta(1)
-    return endday
+    return (str(endday.month-1), str(endday.day), str(endday.year))
 
-def get_stock_historical_info(stock_sym) :
+
+def get_historical(symbol):
     startday = get_startday()
     endday = get_endday()
-    stock = Share(stock_sym)
-    closes = [c['Close'] for c in stock.get_historical(str(startday), str(endday))]
-    floatCloses = [round(float(i), 2) for i in closes]
-    return floatCloses
+    query = history_url+"s="+symbol+"&a="+startday[0]+"&b="+startday[1]+"&c="+startday[2]+"&d="+endday[0]+"&e="+endday[1]+"&f="+endday[2]+"&g=d"
+    response = urllib2.urlopen(query)
+    data = response.read()
+    data = data.split('\n')
+    close_price_history = []
+    for d in data:
+        line = d.split(',')
+        if len(line) != 1:
+            if line[4] != "Close":
+                close_price_history.append(float(line[4]))
+    return close_price_history
 
 # Divided by the maximum common divisor
 def simplify_ratio(original_ratio_list) :
@@ -63,12 +72,12 @@ def select_top_ones(stock_list, num):
 
 #input: top 4 stock symbol list
 def processing(selected_list):
-    
     ratio_list = []
     top4_past_info =[]
     for symbol in selected_list:
         ratio_list.append(avg_map[symbol])
-        top4_past_info.append(get_stock_historical_info(symbol))
+        last_five_day_history = get_historical(symbol)
+        top4_past_info.append(last_five_day_history)
 
     top4_avg_ratio = simplify_ratio(ratio_list)
     top4_stock_avgRatio_profolio_list = [selected_list, top4_avg_ratio]
@@ -102,9 +111,7 @@ def my_form():
 def my_form_post():
 
     amount = request.form['Amount']
-
     strategies_selected = request.form.getlist('strategies')
-    print strategies_selected
     #if one strategy picked, select top4; if two strategy picked, select top2 from each strategy.
     selected_list =[]
     avg_map.clear()
