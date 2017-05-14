@@ -94,6 +94,9 @@ def processing(selected_list):
 
     amount = float(request.form.get('Amount'))
     sum_ratio = float(sum(top4_avg_ratio))
+    
+    #line 99-112 was Laura's code, and I rewrite in loop format, but result is the same. 
+    # (see console output and page load)
     top1_amount = amount * top4_avg_ratio[0] / sum_ratio
     top2_amount = amount * top4_avg_ratio[1] / sum_ratio
     top3_amount = amount * top4_avg_ratio[2] / sum_ratio
@@ -107,10 +110,26 @@ def processing(selected_list):
     top4_stocks_profolio = [x+y+z+w for x, y, z, w in zip(top1_profolio, top2_profolio, top3_profolio, top4_profolio)]
 
     top4_stock_avgRatio_profolio_list.append(top4_stocks_profolio)
+    print top4_stock_avgRatio_profolio_list
+
+
+    amount_distribute = []
+    for r in top4_avg_ratio:
+        amount_distribute.append(amount*r/sum_ratio)
+    top_potfolio = []
+    for i in range(len(selected_list)):
+        stock_profolio= [round( amount_distribute[i]/get_price(selected_list[i]) * j, 2 ) for j in top4_past_info[i]]
+        top_potfolio.append(stock_profolio)
+    top4_stocks_potfolio = []
+    for j in range(len(top4_past_info[0])):
+        sum_profolio = 0
+        for t in top_potfolio:
+            sum_profolio+=t[j]
+        top4_stocks_potfolio.append(sum_profolio)
+    
+    top4_stock_avgRatio_profolio_list.append(top4_stocks_potfolio)
     return top4_stock_avgRatio_profolio_list
-
-
-
+    
 @app.route('/')
 def my_form():
     return render_template("index.html")
