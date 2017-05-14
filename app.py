@@ -63,6 +63,7 @@ def get_historical(symbol):
 
 # Divided by the maximum common divisor
 def simplify_ratio(original_ratio_list) :
+    original_ratio_list = map(abs, original_ratio_list)
     minEle = min(original_ratio_list)
     return [int(x / minEle) for x in original_ratio_list]
 
