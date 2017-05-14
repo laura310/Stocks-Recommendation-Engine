@@ -2,7 +2,7 @@ from flask import Flask
 from flask import jsonify, request, session
 import json
 from flask import render_template
-from yahoo_finance import Share
+#from yahoo_finance import Share
 from datetime import date, timedelta
 import urllib2
 
@@ -28,6 +28,14 @@ def get_200day_moving_percent(symbol):
     data = response.read()
     percent = data.replace('%','').strip()
     return float(percent)
+
+def get_price(symbol):
+    f="l1"
+    query = base_url+"s="+symbol+"&f="+f+"&e=.csv"
+    response = urllib2.urlopen(query)
+    data = response.read()
+    return float(data)
+
 
 def get_startday():
     startday = date.today() - timedelta(7) 
@@ -92,10 +100,10 @@ def processing(selected_list):
     top4_amount = amount * top4_avg_ratio[3] / sum_ratio
 
 
-    top1_profolio = [round( top1_amount/float(Share(selected_list[0]).get_price()) * i, 2 ) for i in top4_past_info[0]]
-    top2_profolio = [round( top2_amount/float(Share(selected_list[1]).get_price()) * i, 2 ) for i in top4_past_info[1]]
-    top3_profolio = [round( top3_amount/float(Share(selected_list[2]).get_price()) * i, 2 ) for i in top4_past_info[2]]
-    top4_profolio = [round( top4_amount/float(Share(selected_list[3]).get_price()) * i, 2 ) for i in top4_past_info[3]]
+    top1_profolio = [round( top1_amount/get_price(selected_list[0]) * i, 2 ) for i in top4_past_info[0]]
+    top2_profolio = [round( top2_amount/get_price(selected_list[1]) * i, 2 ) for i in top4_past_info[1]]
+    top3_profolio = [round( top3_amount/get_price(selected_list[2]) * i, 2 ) for i in top4_past_info[2]]
+    top4_profolio = [round( top4_amount/get_price(selected_list[3]) * i, 2 ) for i in top4_past_info[3]]
     top4_stocks_profolio = [x+y+z+w for x, y, z, w in zip(top1_profolio, top2_profolio, top3_profolio, top4_profolio)]
 
     top4_stock_avgRatio_profolio_list.append(top4_stocks_profolio)
