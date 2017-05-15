@@ -110,9 +110,15 @@ def processing(selected_list):
     for r in top4_avg_ratio:
         amount_distribute.append(amount*r/sum_ratio)
     top_potfolio = []
+    top4_stock_num =[]
     for i in range(len(selected_list)):
-        stock_profolio= [round( amount_distribute[i]/get_price(selected_list[i]) * j, 2 ) for j in top4_past_info[i]]
+        stock_num = float(amount_distribute[i]/get_price(selected_list[i]))
+        top4_stock_num.append(stock_num)
+        stock_profolio= [round(stock_num * j, 2 ) for j in top4_past_info[i]]
         top_potfolio.append(stock_profolio)
+    #session['stock_num'] = top4_stock_num
+
+
     top4_stocks_potfolio = []
     for j in range(len(top4_past_info[0])):
         sum_profolio = 0
@@ -133,13 +139,16 @@ def my_form_post():
 
     amount = request.form['Amount']
     strategies_selected = request.form.getlist('strategies')
+    strategies=[]
     #if one strategy picked, select top4; if two strategy picked, select top2 from each strategy.
     selected_list =[]
     avg_map.clear()
     if len(strategies_selected) == 1:
         selected_list = select_top_ones(stock_map.get(strategies_selected[0]), 4)
+        strategies.append(str(strategies_selected[0]))
     else:
         for s in strategies_selected:
+            strategies.append(str(s))
             top2_list = select_top_ones(stock_map.get(s), 2)
             for symbol in top2_list:
                selected_list.append(symbol)
@@ -148,7 +157,7 @@ def my_form_post():
 
     top4_stock_avgRatio_profolio_list = processing(selected_list)
 
-    return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies_selected, var_companies = company_names,
+    return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies, var_companies = company_names,
         var_top3_stocks=selected_list, var_ratio_list=top4_stock_avgRatio_profolio_list[0],
         var_stocks_profolio=top4_stock_avgRatio_profolio_list[1])
  
@@ -157,13 +166,16 @@ def my_form_post():
 def charts():
     amount = request.form['Amount']
     strategies_selected = request.form.getlist('strategies')
+    strategies=[]
     #if one strategy picked, select top4; if two strategy picked, select top2 from each strategy.
     selected_list =[]
     avg_map.clear()
     if len(strategies_selected) == 1:
         selected_list = select_top_ones(stock_map.get(strategies_selected[0]), 4)
+        strategies.append(str(strategies_selected[0]))
     else:
         for s in strategies_selected:
+            strategies.append(str(s))
             top2_list = select_top_ones(stock_map.get(s), 2)
             for symbol in top2_list:
                selected_list.append(symbol)
@@ -172,7 +184,7 @@ def charts():
 
     top4_stock_avgRatio_profolio_list = processing(selected_list)
 
-    return render_template("charts.html", var_investment_amount=amount, var_strategy=strategies_selected, var_companies = company_names,
+    return render_template("charts.html", var_investment_amount=amount, var_strategy=strategies, var_companies = company_names,
         var_top3_stocks=selected_list, var_ratio_list=top4_stock_avgRatio_profolio_list[0],
         var_stocks_profolio=top4_stock_avgRatio_profolio_list[1])
 
