@@ -43,6 +43,7 @@ def get_company_name(selected_list):
         query = base_url+"s="+symbol+"&f="+f+"&e=.csv"
         response = urllib2.urlopen(query)
         data = response.read()
+        data = data.replace('\n','').strip()
         company_names.append(data)
     print (company_names)
     return company_names
@@ -181,8 +182,8 @@ def charts():
 
     top4_stock_avgRatio_profolio_list = processing(selected_list, amount)
     
-    #if len(strategies_selected) == 1:
-    #    strategies_selected.append(strategies_selected[0]);
+    if len(strategies) == 1:
+        strategies.append(strategies[0]);
 
     return render_template("charts.html", var_investment_amount=amount, var_strategy=strategies, var_companies = company_names,
         var_top3_stocks=selected_list, var_ratio_list=top4_stock_avgRatio_profolio_list[0],
