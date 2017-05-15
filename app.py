@@ -99,7 +99,7 @@ def processing(selected_list):
         top4_past_info.append(last_five_day_history)
 
     top4_avg_ratio = simplify_ratio(ratio_list)
-    top4_stock_avgRatio_profolio_list = [selected_list, top4_avg_ratio]
+    top4_stock_avgRatio_profolio_list = [top4_avg_ratio]
 
     print top4_stock_avgRatio_profolio_list
 
@@ -167,8 +167,8 @@ def my_form_post():
     top4_stock_avgRatio_profolio_list = processing(selected_list)
 
     return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies_selected, var_companies = company_names,
-        var_top3_stocks=top4_stock_avgRatio_profolio_list[0], var_ratio_list=top4_stock_avgRatio_profolio_list[1],
-        var_stocks_profolio=top4_stock_avgRatio_profolio_list[2])
+        var_top3_stocks=selected_list, var_ratio_list=top4_stock_avgRatio_profolio_list[0],
+        var_stocks_profolio=top4_stock_avgRatio_profolio_list[1])
  
 
 @app.route('/charts',  methods=['POST'])
@@ -191,8 +191,8 @@ def charts():
     top4_stock_avgRatio_profolio_list = processing(selected_list)
 
     return render_template("charts.html", var_investment_amount=amount, var_strategy=strategies_selected, var_companies = company_names,
-        var_top3_stocks=top4_stock_avgRatio_profolio_list[0], var_ratio_list=top4_stock_avgRatio_profolio_list[1],
-        var_stocks_profolio=top4_stock_avgRatio_profolio_list[2])
+        var_top3_stocks=selected_list, var_ratio_list=top4_stock_avgRatio_profolio_list[0],
+        var_stocks_profolio=top4_stock_avgRatio_profolio_list[1])
 
   
 finalResult = {}    
