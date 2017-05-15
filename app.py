@@ -156,10 +156,29 @@ def my_form_post():
     return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies_selected, 
         var_top3_stocks=top4_stock_avgRatio_profolio_list[0], var_ratio_list=top4_stock_avgRatio_profolio_list[1],
         var_stocks_profolio=top4_stock_avgRatio_profolio_list[2])
-  
-@app.route('/charts')
+ 
+
+@app.route('/charts',  methods=['POST'])
 def charts():
-   return render_template('charts.html')
+    amount = request.form['Amount']
+    strategies_selected = request.form.getlist('strategies')
+    #if one strategy picked, select top4; if two strategy picked, select top2 from each strategy.
+    selected_list =[]
+    avg_map.clear()
+    if len(strategies_selected) == 1:
+        selected_list = select_top_ones(stock_map.get(strategies_selected[0]), 4)
+    else:
+        for s in strategies_selected:
+            top2_list = select_top_ones(stock_map.get(s), 2)
+            for symbol in top2_list:
+               selected_list.append(symbol)
+    
+    top4_stock_avgRatio_profolio_list = processing(selected_list)
+
+    return render_template("charts.html", var_investment_amount=amount, var_strategy=strategies_selected, 
+        var_top3_stocks=top4_stock_avgRatio_profolio_list[0], var_ratio_list=top4_stock_avgRatio_profolio_list[1],
+        var_stocks_profolio=top4_stock_avgRatio_profolio_list[2])
+
   
 finalResult = {}    
 @app.route('/result',methods = ['POST'])

@@ -23,12 +23,14 @@
     
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-      var companys = ["company1", "company2", "company3"];
-      var strategy = ["growth", "growth", "growth"];
-      var ratios = [10,15,20];
-      var day1 = [100,200,300];
-      var day2 = [200,250,150];
-      var day3 = [300,100,250];
+      var companys = ["{{var_top3_stocks[0]}}", "{{var_top3_stocks[1]}}", "{{var_top3_stocks[2]}}", "{{var_top3_stocks[3]}}"];
+      var strategy = ["growth", "growth", "growth", "growth"];
+      var ratios = [{{var_ratio_list[0]}},{{var_ratio_list[1]}},{{var_ratio_list[2]}},{{var_ratio_list[3]}}];
+      var day1 = [{{var_stocks_profolio[0]}}];
+      var day2 = [{{var_stocks_profolio[1]}}];
+      var day3 = [{{var_stocks_profolio[2]}}];
+      var day4 = [{{var_stocks_profolio[2]}}];
+      var day5 = [{{var_stocks_profolio[2]}}];
       google.charts.load("current", {packages:["corechart"]});
       google.charts.setOnLoadCallback(drawChart);
       function drawChart() {
@@ -36,7 +38,8 @@
           ['Ticker', 'amount'],
           [companys[0],  ratios[0] ],
           [companys[1],  ratios[1] ],
-          [companys[2],  ratios[2] ]          
+          [companys[2],  ratios[2] ],
+          [companys[3],  ratios[3] ] 
         ]);
 
         var options = {
@@ -49,10 +52,12 @@
         
 
         var dataLine = google.visualization.arrayToDataTable([
-          ['Day', companys[0], companys[1], companys[2] ],
-          ['Day1',  day1[0],      day1[1],  day1[2] ],
-          ['Day2',  day2[0],      day2[1],   day2[2] ],
-          ['Day3',  day3[0],     day3[1],   day3[2] ]
+          ['Day', 'price'],
+          ['Day1',  day1[0]],
+          ['Day2',  day2[0]],
+          ['Day3',  day3[0]],
+          ['Day4',  day4[0]],
+          ['Day5',  day5[0]]
         ]);
         var optionsLine = {
           title: 'Weekly Trend',
@@ -65,10 +70,35 @@
         document.getElementById('com1').innerHTML = companys[0];
         document.getElementById('com2').innerHTML = companys[1];
         document.getElementById('com3').innerHTML = companys[2];
-        
+        document.getElementById('com4').innerHTML = companys[3];
+          
         document.getElementById('strat1').innerHTML = strategy[0];
         document.getElementById('strat2').innerHTML = strategy[1];
         document.getElementById('strat3').innerHTML = strategy[2];
+        document.getElementById('strat4').innerHTML = strategy[3];
+          
+        var sum_ratio = ratios[0] + ratios[1] + ratios[2] + ratios[3];
+        var ratio1 = (ratios[0] / sum_ratio) * 100;
+        var ratio2 = (ratios[1] / sum_ratio) * 100;
+        var ratio3 = (ratios[2] / sum_ratio) * 100;
+        var ratio4 = (ratios[3] / sum_ratio) * 100;
+        
+        document.getElementById('ratio1').innerHTML = ratio1;
+        document.getElementById('ratio2').innerHTML = ratio2;
+        document.getElementById('ratio3').innerHTML = ratio3;
+        document.getElementById('ratio4').innerHTML = ratio4;
+          
+          
+        var amount1 = {{var_investment_amount}} * (ratios[0] / sum_ratio);
+        var amount2 = {{var_investment_amount}} * (ratios[1] / sum_ratio);
+        var amount3 = {{var_investment_amount}} * (ratios[2] / sum_ratio);
+        var amount4 = {{var_investment_amount}} * (ratios[3] / sum_ratio);
+          
+        document.getElementById('amount1').innerHTML = amount1;
+        document.getElementById('amount2').innerHTML = amount2;
+        document.getElementById('amount3').innerHTML = amount3;
+        document.getElementById('amount4').innerHTML = amount4;
+
       }
     </script>
       
@@ -165,25 +195,33 @@
                   <td id="strat1">Ethical Investing</td>
                   <td id="com1">company1</td>
                   <td>Nestle</td>
-                  <td>2000</td>
-                  <td>40</td>
+                  <td id="amount1">2000</td>
+                  <td id="ratio1">40</td>
                 </tr>
                 <tr>
                   <td>2</td>
                   <td id="strat2">Ethical Investing</td>
                   <td id="com2">ADBE</td>
                   <td>Adobe</td>
-                  <td>1000</td>
-                  <td>20</td>
+                  <td id="amount2">1000</td>
+                  <td id="ratio2">20</td>
                 </tr>
                 <tr>
                   <td>3</td>
                   <td id="strat3">Index Investing</td>
                   <td id="com3">VTI</td>
                   <td>Vanguard Total Stock Market ETF</td>
-                  <td>750</td>
-                  <td>15</td>
-                </tr>               
+                  <td id="amount3">750</td>
+                  <td id="ratio3">15</td>
+                </tr>        
+                <tr>
+                  <td>4</td>
+                  <td id="strat4">Index Investing</td>
+                  <td id="com4">VTI</td>
+                  <td>Vanguard Total Stock Market ETF</td>
+                  <td id="amount4">750</td>
+                  <td id="ratio4">15</td>
+                </tr>         
               </tbody>
             </table>
           </div>
