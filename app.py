@@ -44,6 +44,7 @@ def get_company_name(selected_list):
         response = urllib2.urlopen(query)
         data = response.read()
         company_names.append(data)
+    print (company_names)
     return company_names
     
 
@@ -90,7 +91,7 @@ def select_top_ones(stock_list, num):
     return top_symbol_list
 
 #input: top 4 stock symbol list
-def processing(selected_list):
+def processing(selected_list, amnt):
     ratio_list = []
     top4_past_info =[]
     for symbol in selected_list:
@@ -103,7 +104,7 @@ def processing(selected_list):
 
     print top4_stock_avgRatio_profolio_list
 
-    amount = float(request.form.get('Amount'))
+    amount = float(amnt)
     sum_ratio = float(sum(top4_avg_ratio))
 
     amount_distribute = []
@@ -116,9 +117,6 @@ def processing(selected_list):
         top4_stock_num.append(stock_num)
         stock_profolio= [round(stock_num * j, 2 ) for j in top4_past_info[i]]
         top_potfolio.append(stock_profolio)
-    #session['stock_num'] = top4_stock_num
-
-
     top4_stocks_potfolio = []
     for j in range(len(top4_past_info[0])):
         sum_profolio = 0
@@ -128,8 +126,7 @@ def processing(selected_list):
     
     top4_stock_avgRatio_profolio_list.append(top4_stocks_potfolio)
     return top4_stock_avgRatio_profolio_list
-
-
+    
 @app.route('/')
 def my_form():
     return render_template("index.html")
@@ -155,7 +152,7 @@ def my_form_post():
     
     company_names = get_company_name(selected_list)
 
-    top4_stock_avgRatio_profolio_list = processing(selected_list)
+    top4_stock_avgRatio_profolio_list = processing(selected_list, amount)
 
     return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies, var_companies = company_names,
         var_top3_stocks=selected_list, var_ratio_list=top4_stock_avgRatio_profolio_list[0],
@@ -182,7 +179,10 @@ def charts():
 
     company_names = get_company_name(selected_list)
 
-    top4_stock_avgRatio_profolio_list = processing(selected_list)
+    top4_stock_avgRatio_profolio_list = processing(selected_list, amount)
+    
+    #if len(strategies_selected) == 1:
+    #    strategies_selected.append(strategies_selected[0]);
 
     return render_template("charts.html", var_investment_amount=amount, var_strategy=strategies, var_companies = company_names,
         var_top3_stocks=selected_list, var_ratio_list=top4_stock_avgRatio_profolio_list[0],
@@ -196,29 +196,49 @@ def displayCharts():
    data = input
    print(data)
    amount = request.json['amount']
+   strategies_selected = []
    finalResult["errMsg"] = "None"
+   finalResult["Strategy"] = []
 
    # Currently, only support checking only one of the checkbox 
    if 'ethical_chosen' in input:
-        top3_stock_avgRatio_profolio_list = ethical_processing()
-        finalResult["Strategy"] = "Ethical Investing"
+        finalResult["Strategy"].append("Ethical Investing")
+        strategies_selected.append("ethical")
    if 'growth_chosen' in input:
-        top3_stock_avgRatio_profolio_list = growth_processing()
-        finalResult["Strategy"] = "Growth Investing"
+        finalResult["Strategy"].append("Growth Investing")
+        strategies_selected.append("growth")
    if 'index_chosen' in input:
-        top3_stock_avgRatio_profolio_list = index_processing()
-        finalResult["Strategy"] = "Index Investing"
+        finalResult["Strategy"].append("Index Investing")
+        strategies_selected.append("index")
    if 'quality_chosen' in input:
-        top3_stock_avgRatio_profolio_list = quality_processing()
-        finalResult["Strategy"] = "Quality Investing"
+        finalResult["Strategy"].append("Quality Investing")
+        strategies_selected.append("quality")
    if 'value_chosen' in input:
-        top3_stock_avgRatio_profolio_list = value_processing()
-        finalResult["Strategy"] = "Value Investing"
+        finalResult["Strategy"].append("Value Investing")
+        strategies_selected.append("value")
    
-   finalResult["Top3"] = top3_stock_avgRatio_profolio_list[0];
-   finalResult["RatioList"] = top3_stock_avgRatio_profolio_list[1];
-   finalResult["PastInfo"] = top3_stock_avgRatio_profolio_list[2];
-   
+   #if one strategy picked, select top4; if two strategy picked, select top2 from each strategy.
+   selected_list = []
+   avg_map.clear()
+   if len(strategies_selected) == 1:
+        selected_list = select_top_ones(stock_map.get(strategies_selected[0]), 4)
+   else:
+        for s in strategies_selected:
+            top2_list = select_top_ones(stock_map.get(s), 2)
+            for symbol in top2_list:
+               selected_list.append(symbol)
+               
+   company_names = get_company_name(selected_list)               
+    
+   top4_stock_avgRatio_profolio_list = processing(selected_list, amount)
+
+   if len(strategies_selected) == 1:
+        strategies_selected.append(strategies_selected[0]);
+   finalResult["Top3"] = selected_list;
+   finalResult["RatioList"] = top4_stock_avgRatio_profolio_list[0];
+   finalResult["PastInfo"] = top4_stock_avgRatio_profolio_list[1]; 
+   finalResult["Strategy"] = strategies_selected;
+   finalResult["Company"] = company_names;
    jsonResult = json.dumps(finalResult)
    return jsonResult
 

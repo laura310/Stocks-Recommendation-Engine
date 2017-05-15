@@ -25,12 +25,13 @@
     <script type="text/javascript">
       var companys = ["{{var_top3_stocks[0]}}", "{{var_top3_stocks[1]}}", "{{var_top3_stocks[2]}}", "{{var_top3_stocks[3]}}"];
       var strategy = ["growth", "growth", "growth", "growth"];
+      var names = ["dfn", "company2", "company3", "company4"];
       var ratios = [{{var_ratio_list[0]}},{{var_ratio_list[1]}},{{var_ratio_list[2]}},{{var_ratio_list[3]}}];
       var day1 = [{{var_stocks_profolio[0]}}];
       var day2 = [{{var_stocks_profolio[1]}}];
       var day3 = [{{var_stocks_profolio[2]}}];
-      var day4 = [{{var_stocks_profolio[2]}}];
-      var day5 = [{{var_stocks_profolio[2]}}];
+      var day4 = [{{var_stocks_profolio[3]}}];
+      var day5 = [{{var_stocks_profolio[4]}}];
       google.charts.load("current", {packages:["corechart"]});
       google.charts.setOnLoadCallback(drawChart);
       function drawChart() {
@@ -71,6 +72,11 @@
         document.getElementById('com2').innerHTML = companys[1];
         document.getElementById('com3').innerHTML = companys[2];
         document.getElementById('com4').innerHTML = companys[3];
+        
+        document.getElementById('name1').innerHTML = names[0];
+        document.getElementById('name2').innerHTML = names[1];
+        document.getElementById('name3').innerHTML = names[2];
+        document.getElementById('name4').innerHTML = names[3];
           
         document.getElementById('strat1').innerHTML = strategy[0];
         document.getElementById('strat2').innerHTML = strategy[1];
@@ -151,7 +157,7 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <form class="input-data">
-                <br>
+                <br><br><br><br>
                 <input type="number" NAME="amt" id="amt" class="form-control" placeholder="Amout to invest (in $)..."><br>
                 <b>Pick one or two strategies:</b><br> 
                 <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check1" id="Check1" onclick="handleClick(this);"> Ethical Investing <br>
@@ -194,7 +200,7 @@
                   <td>1</td>
                   <td id="strat1">Ethical Investing</td>
                   <td id="com1">company1</td>
-                  <td>Nestle</td>
+                  <td id="name1">Nestle</td>
                   <td id="amount1">2000</td>
                   <td id="ratio1">40</td>
                 </tr>
@@ -202,7 +208,7 @@
                   <td>2</td>
                   <td id="strat2">Ethical Investing</td>
                   <td id="com2">ADBE</td>
-                  <td>Adobe</td>
+                  <td id="name2">Adobe</td>
                   <td id="amount2">1000</td>
                   <td id="ratio2">20</td>
                 </tr>
@@ -210,7 +216,7 @@
                   <td>3</td>
                   <td id="strat3">Index Investing</td>
                   <td id="com3">VTI</td>
-                  <td>Vanguard Total Stock Market ETF</td>
+                  <td id="name3">Vanguard Total Stock Market ETF</td>
                   <td id="amount3">750</td>
                   <td id="ratio3">15</td>
                 </tr>        
@@ -218,7 +224,7 @@
                   <td>4</td>
                   <td id="strat4">Index Investing</td>
                   <td id="com4">VTI</td>
-                  <td>Vanguard Total Stock Market ETF</td>
+                  <td id="name4">Vanguard Total Stock Market ETF</td>
                   <td id="amount4">750</td>
                   <td id="ratio4">15</td>
                 </tr>         
@@ -268,15 +274,14 @@
                     }
                 })                    
             });
-            
             function getpayloaddata()
             {		
                 var stockObject = new Object();
-                if(document.getElementById("Check1").checked){stockObject.ethical_chosen = 1;}
-                if(document.getElementById("Check2").checked){stockObject.growth_chosen = 1;}
-                if(document.getElementById("Check3").checked){stockObject.index_chosen = 1;}
-                if(document.getElementById("Check4").checked){stockObject.quality_chosen = 1;}
-                if(document.getElementById("Check5").checked){stockObject.value_chosen = 1;}
+                if(document.getElementById("Check1").checked){stockObject.ethical_chosen = 1; }
+                if(document.getElementById("Check2").checked){stockObject.growth_chosen = 1; }
+                if(document.getElementById("Check3").checked){stockObject.index_chosen = 1; }
+                if(document.getElementById("Check4").checked){stockObject.quality_chosen = 1; }
+                if(document.getElementById("Check5").checked){stockObject.value_chosen = 1; }
                 
                 stockObject.amount = $('#amt').val();
                 var jsonstring = JSON.stringify(stockObject);
@@ -289,13 +294,15 @@
                 if( objOutput.errMsg === "SystemSymbol")
                 {
                 }
-                companys = [objOutput.Top3[0], objOutput.Top3[1], objOutput.Top3[2]];
-                ratios = [objOutput.RatioList[0], objOutput.RatioList[1], objOutput.RatioList[2]];
-                day1 = [objOutput.PastInfo[0][0], objOutput.PastInfo[1][0], objOutput.PastInfo[2][0]];
-                day2 = [objOutput.PastInfo[0][1], objOutput.PastInfo[1][1], objOutput.PastInfo[2][1]];
-                day3 = [objOutput.PastInfo[0][2], objOutput.PastInfo[1][2], objOutput.PastInfo[2][2]];
-                strategy = [objOutput.Strategy, objOutput.Strategy, objOutput.Strategy ];
-                
+                companys = [objOutput.Top3[0], objOutput.Top3[1], objOutput.Top3[2], objOutput.Top3[3]];
+                ratios = [objOutput.RatioList[0], objOutput.RatioList[1], objOutput.RatioList[2], objOutput.RatioList[3]];
+                day1 = [objOutput.PastInfo[0]];
+                day2 = [objOutput.PastInfo[1]];
+                day3 = [objOutput.PastInfo[2]];
+                day4 = [objOutput.PastInfo[3]];
+                day5 = [objOutput.PastInfo[4]];
+                strategy = [objOutput.Strategy[0], objOutput.Strategy[0], objOutput.Strategy[1], objOutput.Strategy[1] ];
+                names = [objOutput.Company[0], objOutput.Company[1], objOutput.Company[2], objOutput.Company[3]];
                 drawChart();
             }
         });
