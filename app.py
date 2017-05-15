@@ -36,6 +36,16 @@ def get_price(symbol):
     data = response.read()
     return float(data)
 
+def get_company_name(selected_list):
+    f = "n"
+    company_names = []
+    for symbol in selected_list:
+        query = base_url+"s="+symbol+"&f="+f+"&e=.csv"
+        response = urllib2.urlopen(query)
+        data = response.read()
+        company_names.append(data)
+    return company_names
+    
 
 def get_startday():
     startday = date.today() - timedelta(7) 
@@ -130,7 +140,8 @@ def processing(selected_list):
     
     top4_stock_avgRatio_profolio_list.append(top4_stocks_potfolio)
     return top4_stock_avgRatio_profolio_list
-    
+
+
 @app.route('/')
 def my_form():
     return render_template("index.html")
@@ -151,9 +162,11 @@ def my_form_post():
             for symbol in top2_list:
                selected_list.append(symbol)
     
+    company_names = get_company_name(selected_list)
+
     top4_stock_avgRatio_profolio_list = processing(selected_list)
 
-    return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies_selected, 
+    return render_template("calculateResult.html", var_investment_amount=amount, var_strategy=strategies_selected, var_companies = company_names,
         var_top3_stocks=top4_stock_avgRatio_profolio_list[0], var_ratio_list=top4_stock_avgRatio_profolio_list[1],
         var_stocks_profolio=top4_stock_avgRatio_profolio_list[2])
  
@@ -172,10 +185,12 @@ def charts():
             top2_list = select_top_ones(stock_map.get(s), 2)
             for symbol in top2_list:
                selected_list.append(symbol)
-    
+
+    company_names = get_company_name(selected_list)
+
     top4_stock_avgRatio_profolio_list = processing(selected_list)
 
-    return render_template("charts.html", var_investment_amount=amount, var_strategy=strategies_selected, 
+    return render_template("charts.html", var_investment_amount=amount, var_strategy=strategies_selected, var_companies = company_names,
         var_top3_stocks=top4_stock_avgRatio_profolio_list[0], var_ratio_list=top4_stock_avgRatio_profolio_list[1],
         var_stocks_profolio=top4_stock_avgRatio_profolio_list[2])
 
