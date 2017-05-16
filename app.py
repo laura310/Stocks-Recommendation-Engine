@@ -192,7 +192,7 @@ def charts():
         var_stocks_profolio=top4_stock_avgRatio_profolio_list[1])
 
 
-@app.route('/getLastest', methods =['POST'])
+@app.route('/getLatest', methods =['POST'])
 def current_value():
     stock_num = session['stock_num']
     selected_stock_symbol = session['selected_list']
@@ -201,6 +201,7 @@ def current_value():
         current_value += float(stock_num[i])*get_price(selected_stock_symbol[i])
     current_value = round(current_value, 2)
     send_value_in_str = "$"+ str(current_value)
+    print ("sssssss" + send_value_in_str)
     return send_value_in_str
 
 
