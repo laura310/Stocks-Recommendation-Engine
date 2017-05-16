@@ -103,8 +103,6 @@ def processing(selected_list, amnt):
     top4_avg_ratio = simplify_ratio(ratio_list)
     top4_stock_avgRatio_profolio_list = [top4_avg_ratio]
 
-    print top4_stock_avgRatio_profolio_list
-
     amount = float(amnt)
     sum_ratio = float(sum(top4_avg_ratio))
 
@@ -118,6 +116,10 @@ def processing(selected_list, amnt):
         top4_stock_num.append(stock_num)
         stock_profolio= [round(stock_num * j, 2 ) for j in top4_past_info[i]]
         top_potfolio.append(stock_profolio)
+
+    session['stock_num'] = top4_stock_num
+    session['selected_list'] = selected_list
+
     top4_stocks_potfolio = []
     for j in range(len(top4_past_info[0])):
         sum_profolio = 0
@@ -189,7 +191,20 @@ def charts():
         var_top3_stocks=selected_list, var_ratio_list=top4_stock_avgRatio_profolio_list[0],
         var_stocks_profolio=top4_stock_avgRatio_profolio_list[1])
 
-  
+
+@app.route('/getLastest', methods =['POST'])
+def current_value():
+    stock_num = session['stock_num']
+    selected_stock_symbol = session['selected_list']
+    current_value = 0
+    for i in range(len(stock_num)):
+        current_value += float(stock_num[i])*get_price(selected_stock_symbol[i])
+    current_value = round(current_value, 2)
+    send_value_in_str = "$"+ str(current_value)
+    return send_value_in_str
+
+
+
 finalResult = {}    
 @app.route('/result',methods = ['POST'])
 def displayCharts():
@@ -245,6 +260,7 @@ def displayCharts():
 
 if __name__ == '__main__':
     #app.run()
+    app.secret_key = 'ABDCEES@$#FAAS'
     app.run( host='0.0.0.0',port = 5000, debug = True) # run app in debug mode
 
 

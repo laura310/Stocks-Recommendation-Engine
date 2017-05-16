@@ -157,8 +157,8 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <form class="input-data">
-                <br><br><br><br>
-                <input type="number" NAME="amt" id="amt" class="form-control" placeholder="Amout to invest (in $)..."><br>
+                <br>
+                <input type="number" NAME="amt" id="amt" class="form-control" min="5000" placeholder="Amout to invest (in $)..." required><br>
                 <b>Pick one or two strategies:</b><br> 
                 <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check1" id="Check1" onclick="handleClick(this);"> Ethical Investing <br>
                 <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check2" id="Check2" onclick="handleClick(this);"> Growth  Investing <br>
@@ -166,6 +166,10 @@
                 <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check4" id="Check4" onclick="handleClick(this);"> Quality  Investing <br>
                 <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check5" id="Check5" onclick="handleClick(this);"> Value Investing <br><br>
                 <input id="submit" type="button" name="submit" value="Submit" style="position: absolute; left:50px; height:40px;width:100px; border-radius: 25px;"><br>
+                
+                <br><br><br><br>
+                <output NAME="amt" id="latest_amt" placeholder="$ 0.0">$ 0.0</output><br>
+                <input id="submit1" type="button" name="submit1" value="Get Latest Value" style="position: absolute; left:50px; height:40px;width:120px; border-radius: 25px;"><br>
             </form>
           </ul>
         </div>
@@ -254,7 +258,11 @@
             
                 // click on button submit
                 //alert('Pick only one or two please.')
-                var inputdata = getpayloaddata();			
+                var inputdata = getpayloaddata();
+                if(inputdata == null)
+                {
+                    return;
+                }
                 console.log(inputdata);
                 
                 $.ajax({
@@ -277,13 +285,24 @@
             function getpayloaddata()
             {		
                 var stockObject = new Object();
-                if(document.getElementById("Check1").checked){stockObject.ethical_chosen = 1; }
-                if(document.getElementById("Check2").checked){stockObject.growth_chosen = 1; }
-                if(document.getElementById("Check3").checked){stockObject.index_chosen = 1; }
-                if(document.getElementById("Check4").checked){stockObject.quality_chosen = 1; }
-                if(document.getElementById("Check5").checked){stockObject.value_chosen = 1; }
+                var cnt = 0;
+                if(document.getElementById("Check1").checked){stockObject.ethical_chosen = 1; cnt++;}
+                if(document.getElementById("Check2").checked){stockObject.growth_chosen = 1; cnt++;}
+                if(document.getElementById("Check3").checked){stockObject.index_chosen = 1; cnt++;}
+                if(document.getElementById("Check4").checked){stockObject.quality_chosen = 1; cnt++;}
+                if(document.getElementById("Check5").checked){stockObject.value_chosen = 1; cnt++;}
                 
                 stockObject.amount = $('#amt').val();
+                if( stockObject.amount < 5000 )
+                {
+                    alert('Amount should be atleast $5000.')
+                    return null;
+                }
+                if( cnt == 0 )
+                {
+                    alert('Please pick a strategy.')
+                    return null;
+                }
                 var jsonstring = JSON.stringify(stockObject);
                 return jsonstring;			
             }
@@ -305,6 +324,25 @@
                 names = [objOutput.Company[0], objOutput.Company[1], objOutput.Company[2], objOutput.Company[3]];
                 drawChart();
             }
+            
+            // click on button - get latest value
+            $("#submit1").on('click', function(){
+            alert('Pick only one or two please.')
+                $.ajax({
+                    url: '/getLatest', // url where to submit the request
+                    type : "post", // type of action post || get
+                    contentType:'application/json',
+                    datatype : 'json', // data type
+                    data : '',
+                    success : function(result) {
+                        console.log(result);
+                        document.getElementById('latest_amt').innerHTML = result;
+                    },
+                    error: function(xhr, resp, text) {
+                        console.log(xhr, resp, text);
+                    }
+                })                    
+            });
         });
     </script>
   </body>
