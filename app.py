@@ -12,11 +12,11 @@ base_url = "http://download.finance.yahoo.com/d/quotes.csv?"
 history_url = "http://ichart.finance.yahoo.com/table.csv?"
 
 stock_map = {
-    'ethical' : ['AAPL', 'GOOG', 'JCI',   'NOV',  'NSRGY'],
-    'growth'  : ['QQQ',  'IWF',  'VUG',  'IVW',   'IWO'],
-    'index'   : ['SPY',  'IWM',  'DIA',   'VTI',  'MDY'],
-    'quality' : ['JPM',  'RAI',  'PSA',  'RYAAY', 'PGR'],
-    'value'   : ['AAL',  'GILD', 'WFC',  'PBR',   'BRFS']
+    'Ethical Investing' : ['AAPL', 'GOOG', 'JCI',   'NOV',  'NSRGY'],
+    'Growth Investing'  : ['QQQ',  'IWF',  'VUG',  'IVW',   'IWO'],
+    'Index Investing'   : ['SPY',  'IWM',  'DIA',   'VTI',  'MDY'],
+    'Quality Investing' : ['JPM',  'RAI',  'PSA',  'RYAAY', 'PGR'],
+    'Value Investing'   : ['AAL',  'GILD', 'WFC',  'PBR',   'BRFS']
 }
 
 avg_map={}
