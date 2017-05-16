@@ -76,8 +76,9 @@ def get_historical(symbol):
 # Divided by the maximum common divisor
 def simplify_ratio(original_ratio_list) :
     original_ratio_list = map(abs, original_ratio_list)
-    minEle = min(original_ratio_list)
-    return [int(x / minEle) for x in original_ratio_list]
+    #minEle = min(original_ratio_list)
+    sumEle = sum(original_ratio_list)
+    return [int(x / sumEle * 100) for x in original_ratio_list]
 
 #Selecte 2 stock from one list
 #input: list of stock symbol, and num of stock to select(either 2 or 4 in our case)
@@ -114,12 +115,12 @@ def processing(selected_list, amnt):
     for i in range(len(selected_list)):
         stock_num = float(amount_distribute[i]/get_price(selected_list[i]))
         top4_stock_num.append(stock_num)
-        stock_profolio= [round(stock_num * j, 2 ) for j in top4_past_info[i]]
+        stock_profolio= [stock_num * j for j in top4_past_info[i]]
         top_potfolio.append(stock_profolio)
-
+        
     session['stock_num'] = top4_stock_num
     session['selected_list'] = selected_list
-
+    
     top4_stocks_potfolio = []
     for j in range(len(top4_past_info[0])):
         sum_profolio = 0
@@ -199,7 +200,7 @@ def current_value():
     current_value = 0
     for i in range(len(stock_num)):
         current_value += float(stock_num[i])*get_price(selected_stock_symbol[i])
-    current_value = round(current_value, 2)
+   #current_value = round(current_value, 2)
     send_value_in_str = "$"+ str(current_value)
     print ("sssssss" + send_value_in_str)
     return send_value_in_str
