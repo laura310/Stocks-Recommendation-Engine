@@ -121,12 +121,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Stock Project</a>
+          <a class="navbar-brand" href="">Stock Project by Team 2</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Help</a></li>
-            <li><a href="#">Our Team</a></li>
+            <li><a href="{{ url_for('static', filename='help.html') }}">Help</a></li>
+            <li><a href="{{ url_for('static', filename='team.html') }}">Our Team</a></li>
           </ul>
         </div>
       </div>
@@ -178,9 +178,6 @@
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
               <div id="piechart_3d" style="width: 600px; height: 360px;"></div>
-              <!-- <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail"> -->
-              <!-- <h4>Strategy</h4> -->
-              <!-- <span class="text-muted">Suggested distribution of money</span> -->
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <div id="curve_chart" style="position: absolute; left:250px; width: 600px; height: 360px"></div>
