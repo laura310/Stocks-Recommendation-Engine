@@ -76,9 +76,8 @@ def get_historical(symbol):
 # Divided by the maximum common divisor
 def simplify_ratio(original_ratio_list) :
     original_ratio_list = map(abs, original_ratio_list)
-    #minEle = min(original_ratio_list)
     sumEle = sum(original_ratio_list)
-    return [int(x / sumEle * 100) for x in original_ratio_list]
+    return [round((x / sumEle * 100),1) for x in original_ratio_list]
 
 #Selecte 2 stock from one list
 #input: list of stock symbol, and num of stock to select(either 2 or 4 in our case)
