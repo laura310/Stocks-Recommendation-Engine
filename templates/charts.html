@@ -95,10 +95,10 @@
         document.getElementById('ratio4').innerHTML = ratio4;
           
           
-        var amount1 = {{var_investment_amount}} * (ratios[0] / sum_ratio);
-        var amount2 = {{var_investment_amount}} * (ratios[1] / sum_ratio);
-        var amount3 = {{var_investment_amount}} * (ratios[2] / sum_ratio);
-        var amount4 = {{var_investment_amount}} * (ratios[3] / sum_ratio);
+        var amount1 = Math.round({{var_investment_amount}} * (ratios[0] / sum_ratio));
+        var amount2 = Math.round({{var_investment_amount}} * (ratios[1] / sum_ratio));
+        var amount3 = Math.round({{var_investment_amount}} * (ratios[2] / sum_ratio));
+        var amount4 = Math.round({{var_investment_amount}} * (ratios[3] / sum_ratio));
           
         document.getElementById('amount1').innerHTML = amount1;
         document.getElementById('amount2').innerHTML = amount2;
