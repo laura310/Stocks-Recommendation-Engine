@@ -68,16 +68,36 @@
     <h1>Stock Recommendation Engine</h1>
     <h3>Service Provider: CMPE 285 Team 2</h3>
 
+    <script>   
+        function handleClick(cb) 
+        {
+            var count = 0;
+            if(document.getElementById("ethicalCheckbox").checked){count += 1;}
+            if(document.getElementById("growthCheckbox").checked){count += 1;}
+            if(document.getElementById("indexCheckbox").checked){count += 1;}
+            if(document.getElementById("qualityCheckbox").checked){count += 1;}
+            if(document.getElementById("valueCheckbox").checked){count += 1;}
+            if(count > 2)
+            {
+                alert('Pick only one or two please.')
+                cb.checked = false;
+            }
+        }
+        
+       
+       
+    </script>
+
     <form action="/charts" method="POST" class ="input-form">
-        Enter Investment Amount: $ <input type="text" name="Amount" required size = "30"><br>
+        Enter Investment Amount: $ <input type="text" name="Amount" placeholder="Amout to invest (in $)..." min = "5000" required size = "20"><br>
         Choose One or Two Investment Strategies <br><br>
 
         <div class = "checkbox-inline">
-            <input type="checkbox" id="ethicalCheckbox" value="Ethical Investing" name="strategies"> Ethical Investing<br>
-            <input type="checkbox" id="growthCheckbox" value="Growth Investing" name="strategies"> Growth Investing<br>
-            <input type="checkbox" id="indexCheckbox" value="Index Investing" name="strategies"> Index Investing<br>
-            <input type="checkbox" id="qualityCheckbox" value="Quality Investing" name="strategies"> Quality Investing<br>
-            <input type="checkbox" id="valueCheckbox" value="Value Investing" name="strategies"> Value Investing<br>
+            <input type="checkbox" id="ethicalCheckbox" value="Ethical Investing" name="strategies" onclick="handleClick(this);"> Ethical Investing<br>
+            <input type="checkbox" id="growthCheckbox" value="Growth Investing" name="strategies" onclick="handleClick(this);"> Growth Investing<br>
+            <input type="checkbox" id="indexCheckbox" value="Index Investing" name="strategies"onclick="handleClick(this);"> Index Investing<br>
+            <input type="checkbox" id="qualityCheckbox" value="Quality Investing" name="strategies"onclick="handleClick(this);"> Quality Investing<br>
+            <input type="checkbox" id="valueCheckbox" value="Value Investing" name="strategies"onclick="handleClick(this);"> Value Investing<br>
         </div><br><br>
 
         <input type="submit" name="my-form" value="Recommend">
