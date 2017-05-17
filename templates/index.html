@@ -2,22 +2,28 @@
 <html lang="en">
 
 <head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <style>
         form{
             margin-top:10%;
-            margin-left:40%;
+            margin-left:35%;
+            font-size: 20px;
         }
         h1{
             margin-top:5%;
             margin-bottom:10px;
-            margin-left:40%;
+            margin-left:35%;
         }
         h3{
             margin-top:40px;
-            margin-bottom: 10px;
-            margin-left:40%;
+            margin-left:35%;
         }
-            
+
+
 
         input[type=text] {
             padding:5px; 
@@ -40,12 +46,30 @@
 </head>
 
 <body>
-
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="">Stock Project by Team 2</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{{ url_for('static', filename='help.html') }}">Help</a></li>
+            <li><a href="{{ url_for('static', filename='team.html') }}">Our Team</a></li>
+          </ul>
+        </div>
+    </div>
+    </nav>
     <h1>Stock Recommendation Engine</h1>
     <h3>Service Provider: CMPE 285 Team 2</h3>
 
-    <form action="/charts" method="POST">
-        Enter Investment Amount <input type="text" name="Amount" required><br>
+    <form action="/charts" method="POST" class ="input-form">
+        Enter Investment Amount: $ <input type="text" name="Amount" required size = "30"><br>
         Choose One or Two Investment Strategies <br><br>
 
         <div class = "checkbox-inline">
