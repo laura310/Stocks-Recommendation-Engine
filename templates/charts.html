@@ -157,8 +157,8 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <form class="input-data">
-                <br>
-                <input type="number" NAME="amt" id="amt" class="form-control" min="5000" placeholder="Amout to invest (in $)..." required><br>
+                <br><br><br><br><br>
+                <input type="number" NAME="amt" id="amt" class="form-control" min="5000" max = "99999999" placeholder="Amout to invest (in $)..." required><br>
                 <b>Pick one or two strategies:</b><br> 
                 <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check1" id="Check1" onclick="handleClick(this);"> Ethical Investing <br>
                 <INPUT class="single-checkbox" TYPE="checkbox" NAME="Check2" id="Check2" onclick="handleClick(this);"> Growth  Investing <br>
@@ -293,6 +293,11 @@
                 if( stockObject.amount < 5000 )
                 {
                     alert('Amount should be atleast $5000.')
+                    return null;
+                }
+                if( stockObject.amount > 99999999 )
+                {
+                    alert('Amount should be less than $99999999.')
                     return null;
                 }
                 if( cnt == 0 )
