@@ -28,6 +28,7 @@ def get_200day_moving_percent(symbol):
     response = urllib2.urlopen(query)
     data = response.read()
     percent = data.replace('%','').strip()
+    print(percent)
     return float(percent)
 
 def get_price(symbol):
@@ -265,7 +266,8 @@ def displayCharts():
         selected_list = select_top_ones(stock_map.get(strategies_selected[0]), 4)
    else:
         for s in strategies_selected:
-            top2_list = select_top_ones(stock_map.get(s), 2)
+            print(s)
+            top2_list = select_top_ones(s, 2)
             for symbol in top2_list:
                selected_list.append(symbol)
                
