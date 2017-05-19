@@ -245,29 +245,30 @@ def displayCharts():
    # Currently, only support checking only one of the checkbox 
    if 'ethical_chosen' in input:
         finalResult["Strategy"].append("Ethical Investing")
-        strategies_selected.append("ethical")
+        strategies_selected.append("Ethical Investing")
    if 'growth_chosen' in input:
         finalResult["Strategy"].append("Growth Investing")
-        strategies_selected.append("growth")
+        strategies_selected.append("Growth Investing")
    if 'index_chosen' in input:
         finalResult["Strategy"].append("Index Investing")
-        strategies_selected.append("index")
+        strategies_selected.append("Index Investing")
    if 'quality_chosen' in input:
         finalResult["Strategy"].append("Quality Investing")
-        strategies_selected.append("quality")
+        strategies_selected.append("Quality Investing")
    if 'value_chosen' in input:
         finalResult["Strategy"].append("Value Investing")
-        strategies_selected.append("value")
+        strategies_selected.append("Value Investing")
    
    #if one strategy picked, select top4; if two strategy picked, select top2 from each strategy.
    selected_list = []
    avg_map.clear()
    if len(strategies_selected) == 1:
+        print(strategies_selected[0])
         selected_list = select_top_ones(stock_map.get(strategies_selected[0]), 4)
    else:
         for s in strategies_selected:
             print(s)
-            top2_list = select_top_ones(s, 2)
+            top2_list = select_top_ones(stock_map.get(s), 2)
             for symbol in top2_list:
                selected_list.append(symbol)
                
