@@ -10,6 +10,7 @@ import urllib2
 app = Flask(__name__)
 base_url = "http://download.finance.yahoo.com/d/quotes.csv?"
 history_url = "http://ichart.finance.yahoo.com/table.csv?"
+google_url="http://www.google.com/finance/historical?"
 
 stock_map = {
     'Ethical Investing' : ['AAPL', 'GOOG', 'JCI',   'NOV',  'NSRGY'],
@@ -45,7 +46,6 @@ def get_company_name(selected_list):
         data = response.read()
         data = data.replace('\n','').strip()
         company_names.append(data)
-    print (company_names)
     return company_names
     
 
@@ -57,6 +57,13 @@ def get_endday():
     endday = date.today() - timedelta(1)
     return (str(endday.month-1), str(endday.day), str(endday.year))
 
+def get_startday_google() :
+    startday = date.today() - timedelta(7) 
+    return (str(startday.month), str(startday.day),str(startday.year))
+
+def get_endday_google() :
+    endday = date.today() - timedelta(1)
+    return (str(endday.month), str(endday.day), str(endday.year))
 
 def get_historical(symbol):
     startday = get_startday()
@@ -72,6 +79,23 @@ def get_historical(symbol):
             if line[4] != "Close":
                 close_price_history.append(float(line[4]))
     return close_price_history
+
+def get_historical_google(symbol):
+    startday = get_startday_google()
+    endday = get_endday_google()
+    query = google_url+"q="+symbol+"&histperiod=daily&startdate="+startday[0]+"+"+startday[1]+"+"+startday[2]+"&enddate="+endday[0]+"+"+endday[1]+"+"+endday[2]+"&output=csv"
+    response = urllib2.urlopen(query)
+    data = response.read()
+    data = data.split('\n')
+    close_price_history = []
+    
+    for d in data:
+        line = d.split(',')
+        if len(line) != 1:
+            if line[4] != "Close":
+                close_price_history.append(float(line[4]))
+ 
+    return close_price_history 
 
 # Divided by the maximum common divisor
 def simplify_ratio(original_ratio_list) :
@@ -97,7 +121,7 @@ def processing(selected_list, amnt):
     top4_past_info =[]
     for symbol in selected_list:
         ratio_list.append(avg_map[symbol])
-        last_five_day_history = get_historical(symbol)
+        last_five_day_history = get_historical_google(symbol)
         top4_past_info.append(last_five_day_history)
 
     top4_avg_ratio = simplify_ratio(ratio_list)
